@@ -16,112 +16,57 @@ use Any::Moose (
 	    'LookingForType',
 	    'NetworkPresenceType',
 	    ### subtype
-	    'Datetime',
+	    'Address',
+	    'Url',
 	]
     ],
-    'Uri::Types::' . any_moose() => [qw/HashRef ArrayRef CodeRef Object Str Bool/],
+    'X::Types::' . any_moose() => [qw/HashRef ArrayRef CodeRef Object Str Bool/],
+);
+use Any::Moose '::Util::TypeConstraints';
+
+use Data::OpenSocial::Address;
+use Data::OpenSocial::Url;
+
+our %SIMPLE_TYPES = (
+    EscapeTypeType => [qw/HTML_ESCAPE NONE/],
+    MediaItemType  => [qw/AUDIO IMAGE VIDEO/],
+    DrinkerType =>
+      [qw/HEAVILY NO OCCASIONALLY QUIT QUITTING REGULARLY SOCIALLY YES/],
+    PresenceType => [qw/AWAY CHAT DND OFFLINE ONLINE XA/],
+    SmokerType =>
+      [qw/HEAVILY NO OCCASIONALLY QUIT QUITTING REGULARLY SOCIALLY YES/],
+    CreateActivityPriorityType => [qw/HIGH LOW/],
+    MessageTypeType => [qw/EMAIL NOTIFICATION PRIVATE_MESSAGE PUBLIC_MESSAGE/],
+    EnvironmentType => [
+        qw/ACTIVITY ADDRESS BODY_TYPE EMAIL FILTER_TYPE MEDIAITEM MESSAGE MESSAGE_TYPE NAME ORGANIZATION PERSON PHONE SORTORDER URL/
+    ],
+    LookingForType =>
+      [qw/ACTIVITY_PARTNERS DATING FRIENDS NETWORKING RANDOM RELATIONSHIP/],
+    NetworkPresenceType => [qw/AWAY CHAT DND OFFLINE ONLINE XA/],
 );
 
-use DateTime;
-use URI;
-
-enum 'EscapeTypeType' => qw(
-    HTML_ESCAPE
-    NONE
+our %COMPLEX_TYPES = (
+    Address => +{
+	class_type => 'Data::OpenSocial::Address',
+    },
+    Url => +{
+	class_type => 'Data::OpenSocial::Url',
+    },
 );
 
-enum 'MediaItemType' => qw(
-    AUDIO
-    IMAGE
-    VIDEO
-);
+do {
+    while ( my ($type, $enums) = each %SIMPLE_TYPES ) {
+	enum $type => @$enums;
+    }
+};
 
-enum 'DrinkerType' => qw(
-    HEAVILY
-    NO
-    OCCASIONALLY
-    QUIT
-    QUITTING
-    REGULARLY
-    SOCIALLY
-    YES
-);
+do {
+    class_type 'Data::OpenSocial::Address';
+    subtype Address => as 'Data::OpenSocial::Address';
 
-enum 'PresenceType' => qw(
-    AWAY
-    CHAT
-    DND
-    OFFLINE
-    ONLINE
-    XA
-);
-
-enum 'SmokerType' => qw(
-    HEAVILY
-    NO
-    OCCASIONALLY
-    QUIT
-    QUITTING
-    REGULARLY
-    SOCIALLY
-    YES
-);
-
-enum 'CreateActivityPriorityType' => qw(
-    HIGH
-    LOW
-);
-
-enum 'MessageTypeType' => qw(
-    EMAIL
-    NOTIFICATION
-    PRIVATE_MESSAGE
-    PUBLIC_MESSAGE
-);
-
-enum 'EnvironmentType' => qw(
-    ACTIVITY
-    ADDRESS
-    BODY_TYPE
-    EMAIL
-    FILTER_TYPE
-    MEDIAITEM
-    MESSAGE
-    MESSAGE_TYPE
-    NAME
-    ORGANIZATION
-    PERSON
-    PHONE
-    SORTORDER
-    URL
-);
-
-enum 'LookingForType' => qw(
-    ACTIVITY_PARTNERS
-    DATING
-    FRIENDS
-    NETWORKING
-    RANDOM
-    RELATIONSHIP
-);
-
-enum 'NetworkPresenceType' => qw(
-    AWAY
-    CHAT
-    DND
-    OFFLINE
-    ONLINE
-    XA
-);
-
-subtype 'Datetime' =>
-    as 'DateTime';
-
-coerce 'Datetime' =>
-    from 'Int',
-    via {
-	DateTime->from_epoch( epoch => $_ );
-    };
+    class_type 'Data::OpenSocial::Url';
+    subtype Url => as 'Data::OpenSocial::Url';
+};
 
 no Any::Moose;
 

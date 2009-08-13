@@ -1,7 +1,11 @@
 package Data::OpenSocial::MediaItem;
 
 use Any::Moose;
-use Data::OpenSocial::Types qw(Datetime MediaItemType);
+use Any::Moose (
+    'X::Types::DateTime' => [qw/DateTime/],
+);
+
+use Data::OpenSocial::Types qw(MediaItemType Address);
 
 has 'id' => (
     is	      => 'rw',
@@ -19,7 +23,7 @@ has 'title' => (
 
 has 'created' => (
     is	      => 'rw',
-    isa	      => 'Datetime',
+    isa	      => 'DateTime',
     required  => 0,
     predicate => 'has_created',
 );
@@ -47,7 +51,7 @@ has 'duration' => (
 
 has 'location' => (
     is	      => 'rw',
-    isa	      => 'Str', ### TODO
+    isa	      => 'Address',
     required  => 0,
     predicate => 'has_location',
 );
@@ -75,7 +79,7 @@ has 'file_size' => (
 
 has 'start_time' => (
     is	      => 'rw',
-    isa	      => 'Datetime',
+    isa	      => 'DateTime',
     required  => 0,
     predicate => 'has_start_time',
 );
@@ -131,7 +135,7 @@ has 'mime_type' => (
 
 has 'type' => (
     is	      => 'rw',
-    isa	      => 'Str', ### TODO
+    isa	      => 'MediaItemType', 
     required  => 0,
     predicate => 'has_type',
 );

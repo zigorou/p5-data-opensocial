@@ -2,8 +2,7 @@ package Data::OpenSocial::PluralPersonField;
 
 use Any::Moose;
 
-use URI;
-use XML::LibXML;
+with 'Data::OpenSocial::Role::AsObject';
 
 has 'value' => (
     is => 'rw',
@@ -25,6 +24,20 @@ has 'primary' => (
     required => 0,
     predicate => 'has_primary',
 );
+
+sub elements_map {
+    return +{};
+}
+
+sub element_fields {
+    return qw(value type primary);
+}
+
+no Any::Moose;
+
+__PACKAGE__->meta->make_immutable;
+
+__END__
 
 has 'ns_uri' => (
     is => 'ro',
@@ -99,7 +112,3 @@ sub as_object {
 
     return $object;
 }
-
-no Any::Moose;
-
-__PACKAGE__->meta->make_immutable;
