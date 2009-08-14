@@ -2,36 +2,46 @@ package Data::OpenSocial::ActivityTemplateParams;
 
 use Any::Moose;
 
-has 'person_key' => (
-    is	      => 'rw',
-    isa	      => 'Str',
-    required  => 0,
-    predicate => 'has_additional_name',
-);
+with 'Data::OpenSocial::Role::AsObject';
 
-has 'person_key_display_name' => (
-    is	      => 'rw',
-    isa	      => 'Str',
-    required  => 0,
-    predicate => 'has_family_name',
-);
+use Data::OpenSocial::Types qw(Person);
 
-has 'person_key_id' => (
-    is	      => 'rw',
-    isa	      => 'Str',
-    required  => 0,
-    predicate => 'has_given_name',
-);
+do {
+    my @element_fields = (
+        +{
+            field     => 'person_key',
+            is        => 'rw',
+            isa       => 'Str',
+            required  => 0,
+            predicate => 'has_additional_name',
+        },
+        +{
+            field     => 'person_key_display_name',
+            is        => 'rw',
+            isa       => 'Str',
+            required  => 0,
+            predicate => 'has_family_name',
+        },
+        +{
+            field     => 'person_key_id',
+            is        => 'rw',
+            isa       => 'Str',
+            required  => 0,
+            predicate => 'has_given_name',
+        },
+        +{
+            field     => 'person',
+            is        => 'rw',
+            isa       => 'Person',
+            required  => 0,
+            predicate => 'has_person',
+        },
+    );
 
-has 'person' => (
-    is	      => 'rw',
-    isa	      => 'Str', ### TODO
-    required  => 0,
-    predicate => 'has_person',
-);
+    
+};
 
 no Any::Moose;
 
 __PACKAGE__->meta->make_immutable;
-
 

@@ -1,20 +1,16 @@
 package Data::OpenSocial::Role::AsObject;
 
 use Any::Moose '::Role';
+
+use DateTime::Format::XSD;
 use Data::OpenSocial::Types;
 
 use Perl6::Say;
 use Data::Dump qw(dump);
 
-requires 'elements_map';
+requires 'element_to_field';
+requires 'field_to_element';
 requires 'element_fields';
-
-our %primitive_type = (
-    Str => 1,
-    Bool => 1,
-    Int => 1,
-    Any => 1,
-);
 
 sub as_object {
     my $self = shift;
@@ -26,14 +22,39 @@ sub as_object {
 
 	my $type         = $attr->type_constraint;
 	my $predicate    = $attr->predicate;
-	my $element_name = $self->elements_map->{$field} || $field;
+	my $element_name = $self->field_to_element($field);
 
-	say $type;
-	
 	next unless ($self->$predicate);
 	
-	if (exists $primitive_type{$type} || exists $Data::OpenSocial::Types::SIMPLE_TYPES{$type} || $type eq 'DateTime') {
+	if (Data::OpenSocial::Types->is_primitive_type($type) || Data::OpenSocial::Types->is_simple_type($type)) {
 	    $obj->{$element_name} = $self->$field;
+	}
+	elsif (Data::OpenSocial::Types->is_imported_type($type)) {
+	    if ($type eq 'DateTime') {
+		$obj->{$element_name} = DateTime::Format::XSD->format_datetime($self->$field);
+	    }
+	}
+	elsif ($type =~ m#ArrayRef\[([^\[\]]+)\]$#) {
+	    my $subtype = $1;
+
+	    my $data = [];
+	    for my $item (@{$self->$field}) {
+		if (Data::OpenSocial::Types->is_primitive_type($type) || Data::OpenSocial::Types->is_simple_type($type)) {
+		    push(@$data, $item);
+		}
+		elsif (Data::OpenSocial::Types->is_imported_type($type)) {
+		    if ($type eq 'DateTime') {
+			push(@$data, DateTime::Format::XSD->format_datetime($self->$field));
+		    }
+		}
+		else {
+		    push(@$data, $item->as_object);
+		}
+		$obj->{$element_name} = $data;
+	    }
+	}
+	else {
+	    $obj->{$element_name} = $self->$field->as_object;
 	}
     }
 

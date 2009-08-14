@@ -16,7 +16,8 @@ use Any::Moose (
 	    'LookingForType',
 	    'NetworkPresenceType',
 	    ### subtype
-	    'Address',
+	    # 'Person',
+	    # 'Address',
 	    'Url',
 	]
     ],
@@ -25,7 +26,18 @@ use Any::Moose (
 use Any::Moose '::Util::TypeConstraints';
 
 use Data::OpenSocial::Address;
+use Data::OpenSocial::Person;
 use Data::OpenSocial::Url;
+
+our %PREMITIVE_TYPES = (
+    Str	 => 1,
+    Bool => 1,
+    Int	 => 1,
+);
+
+our %IMPORTED_TYPES = (
+    DateTime => 1,
+);
 
 our %SIMPLE_TYPES = (
     EscapeTypeType => [qw/HTML_ESCAPE NONE/],
@@ -54,6 +66,26 @@ our %COMPLEX_TYPES = (
     },
 );
 
+sub is_primitive_type {
+    my ($class, $type) = @_;
+    exists $PREMITIVE_TYPES{$type};
+}
+
+sub is_imported_type {
+    my ($class, $type) = @_;
+    exists $IMPORTED_TYPES{$type};
+}
+
+sub is_simple_type {
+    my ($class, $type) = @_;
+    exists $SIMPLE_TYPES{$type};
+}
+
+sub is_complex_type {
+    my ($class, $type) = @_;
+    exists $COMPLEX_TYPES{$type};
+}
+
 do {
     while ( my ($type, $enums) = each %SIMPLE_TYPES ) {
 	enum $type => @$enums;
@@ -61,11 +93,35 @@ do {
 };
 
 do {
-    class_type 'Data::OpenSocial::Address';
-    subtype Address => as 'Data::OpenSocial::Address';
+#     class_type 'Data::OpenSocial::Address';
+#     subtype 'Address' => as 'Data::OpenSocial::Address';
 
-    class_type 'Data::OpenSocial::Url';
-    subtype Url => as 'Data::OpenSocial::Url';
+#     class_type 'Data::OpenSocial::Person';
+#     subtype 'Person' => as 'Data::OpenSocial::Person';
+
+#     class_type 'Data::OpenSocial::Url';
+#     subtype 'Url' => as 'Data::OpenSocial::Url';
+
+    coerce 'Url'
+	=> from 'HashRef'
+	=> via {
+	    Data::OpenSocial::Url->new(%$_);
+	};
+
+    subtype 'ArrayRef[Url]' => as 'ArrayRef[Object]';
+
+    coerce 'ArrayRef[Url]'
+	=> from 'ArrayRef[HashRef]'
+	=> via {
+	    my $data = shift;
+	    my $ret = [];
+
+	    for (@$data) {
+		push(@$ret, Data::OpenSocial::Url->new(%$_));
+	    }
+
+	    $ret;
+	};
 };
 
 no Any::Moose;
