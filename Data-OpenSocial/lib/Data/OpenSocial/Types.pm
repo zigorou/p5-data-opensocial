@@ -5,28 +5,38 @@ use Any::Moose (
     'X::Types' => [
 	-declare => [
 	    ### enum
-	    'EscapeTypeType',
-	    'MediaItemType',
-	    'DrinkerType',
-	    'PresenceType',
-	    'SmokerType',
-	    'CreateActivityPriorityType',
-	    'MessageTypeType',
-	    'EnvironmentType',
-	    'LookingForType',
-	    'NetworkPresenceType',
+	    'OpenSocial.EscapeTypeType',
+	    'OpenSocial.MediaItemType',
+	    'OpenSocial.DrinkerType',
+	    'OpenSocial.PresenceType',
+	    'OpenSocial.SmokerType',
+	    'OpenSocial.CreateActivityPriorityType',
+	    'OpenSocial.MessageTypeType',
+	    'OpenSocial.EnvironmentType',
+	    'OpenSocial.LookingForType',
+	    'OpenSocial.NetworkPresenceType',
 	    ### subtype
-	    # 'Person',
-	    # 'Address',
-	    'Url',
+	    'OpenSocial.Account',
+	    'OpenSocial.Activity',
+	    'OpenSocial.ActivityTemplateParams',
+	    'OpenSocial.Address',
+	    'OpenSocial.Appdata',
+	    'OpenSocial.Person',
+	    'OpenSocial.PluralPersonField',
+	    'OpenSocial.Url',
 	]
     ],
     'X::Types::' . any_moose() => [qw/HashRef ArrayRef CodeRef Object Str Bool/],
 );
 use Any::Moose '::Util::TypeConstraints';
 
+use Data::OpenSocial::Account;
+use Data::OpenSocial::Activity;
+use Data::OpenSocial::ActivityTemplateParams;
 use Data::OpenSocial::Address;
+use Data::OpenSocial::Appdata;
 use Data::OpenSocial::Person;
+use Data::OpenSocial::PluralPersonField;
 use Data::OpenSocial::Url;
 
 our %PREMITIVE_TYPES = (
@@ -40,28 +50,46 @@ our %IMPORTED_TYPES = (
 );
 
 our %SIMPLE_TYPES = (
-    EscapeTypeType => [qw/HTML_ESCAPE NONE/],
-    MediaItemType  => [qw/AUDIO IMAGE VIDEO/],
-    DrinkerType =>
+    'OpenSocial.EscapeTypeType' => [qw/HTML_ESCAPE NONE/],
+    'OpenSocial.MediaItemType'  => [qw/AUDIO IMAGE VIDEO/],
+    'OpenSocial.DrinkerType' =>
+	[qw/HEAVILY NO OCCASIONALLY QUIT QUITTING REGULARLY SOCIALLY YES/],
+    'OpenSocial.PresenceType' => [qw/AWAY CHAT DND OFFLINE ONLINE XA/],
+    'OpenSocial.SmokerType' =>
       [qw/HEAVILY NO OCCASIONALLY QUIT QUITTING REGULARLY SOCIALLY YES/],
-    PresenceType => [qw/AWAY CHAT DND OFFLINE ONLINE XA/],
-    SmokerType =>
-      [qw/HEAVILY NO OCCASIONALLY QUIT QUITTING REGULARLY SOCIALLY YES/],
-    CreateActivityPriorityType => [qw/HIGH LOW/],
-    MessageTypeType => [qw/EMAIL NOTIFICATION PRIVATE_MESSAGE PUBLIC_MESSAGE/],
-    EnvironmentType => [
+    'OpenSocial.CreateActivityPriorityType' => [qw/HIGH LOW/],
+    'OpenSocial.MessageTypeType' => [qw/EMAIL NOTIFICATION PRIVATE_MESSAGE PUBLIC_MESSAGE/],
+    'OpenSocial.EnvironmentType' => [
         qw/ACTIVITY ADDRESS BODY_TYPE EMAIL FILTER_TYPE MEDIAITEM MESSAGE MESSAGE_TYPE NAME ORGANIZATION PERSON PHONE SORTORDER URL/
     ],
-    LookingForType =>
+    'OpenSocial.LookingForType' =>
       [qw/ACTIVITY_PARTNERS DATING FRIENDS NETWORKING RANDOM RELATIONSHIP/],
-    NetworkPresenceType => [qw/AWAY CHAT DND OFFLINE ONLINE XA/],
+    'OpenSocial.NetworkPresenceType' => [qw/AWAY CHAT DND OFFLINE ONLINE XA/],
 );
 
 our %COMPLEX_TYPES = (
-    Address => +{
+    'OpenSocial.Account' => +{
+	class_type => 'Data::OpenSocial::Account',
+    },
+    'OpenSocial.Activity' => +{
+	class_type => 'Data::OpenSocial::Activity',
+    },
+    'OpenSocial.ActivityTemplateParams' => +{
+	class_type => 'Data::OpenSocial::ActivityTemplateParams',
+    },
+    'OpenSocial.Address' => +{
 	class_type => 'Data::OpenSocial::Address',
     },
-    Url => +{
+    'OpenSocial.Appdata' => +{
+	class_type => 'Data::OpenSocial::Appdata',
+    },
+    'OpenSocial.Person' => +{
+	class_type => 'Data::OpenSocial::Person',
+    },
+    'OpenSocial.PluralPersonField' => +{
+	class_type => 'Data::OpenSocial::PluralPersonField'
+    },
+    'OpenSocial.Url' => +{
 	class_type => 'Data::OpenSocial::Url',
     },
 );
@@ -93,35 +121,54 @@ do {
 };
 
 do {
+    while (my ($type, $attrs) = each %COMPLEX_TYPES ) {
+	class_type $attrs->{class_type};
+	subtype $type => as $attrs->{class_type};
+    }
+
+    
+#     class_type 'Data::OpenSocial::Account';
+#     subtype 'OpenSocial.Account' => as 'Data::OpenSocial::Account';
+
 #     class_type 'Data::OpenSocial::Address';
-#     subtype 'Address' => as 'Data::OpenSocial::Address';
+#     subtype 'OpenSocial.Address' => as 'Data::OpenSocial::Address';
 
+#     class_type 'Data::OpenSocial::Appdata';
+#     subtype 'OpenSocial.Appdata' => as 'Data::OpenSocial::Appdata';
+    
 #     class_type 'Data::OpenSocial::Person';
-#     subtype 'Person' => as 'Data::OpenSocial::Person';
+#     subtype 'OpenSocial.Person' => as 'Data::OpenSocial::Person';
+#     coerce 'OpenSocial.Person'
+# 	=> from 'HashRef'
+# 	=> via {
+# 	    Data::OpenSocial::Person->new(%$_);
+# 	};
 
+#     class_type 'Data::OpenSocial::PluralPersonField';
+#     subtype 'OpenSocial.PluralPersonField' => as 'Data::OpenSocial::PluralPersonField';
+    
 #     class_type 'Data::OpenSocial::Url';
-#     subtype 'Url' => as 'Data::OpenSocial::Url';
+#     subtype 'OpenSocial.Url' => as 'Data::OpenSocial::Url';
+#     coerce 'OpenSocial.Url'
+# 	=> from 'HashRef'
+# 	=> via {
+# 	    Data::OpenSocial::Url->new(%$_);
+# 	};
 
-    coerce 'Url'
-	=> from 'HashRef'
-	=> via {
-	    Data::OpenSocial::Url->new(%$_);
-	};
+    # subtype 'ArrayRef[OpenSocial.Url]' => as 'ArrayRef[Object]';
+    # coerce 'ArrayRef[OpenSocial.Url]'
+# 	=> from 'ArrayRef[HashRef]'
+# 	=> via {
+# 	    my $data = shift;
+# 	    my $ret = [];
 
-    subtype 'ArrayRef[Url]' => as 'ArrayRef[Object]';
+# 	    for (@$data) {
+# 		push(@$ret, Data::OpenSocial::Url->new(%$_));
+# 	    }
 
-    coerce 'ArrayRef[Url]'
-	=> from 'ArrayRef[HashRef]'
-	=> via {
-	    my $data = shift;
-	    my $ret = [];
+# 	    $ret;
+# 	};
 
-	    for (@$data) {
-		push(@$ret, Data::OpenSocial::Url->new(%$_));
-	    }
-
-	    $ret;
-	};
 };
 
 no Any::Moose;

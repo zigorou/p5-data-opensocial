@@ -6,18 +6,16 @@ use DateTime::Format::XSD;
 use Data::OpenSocial::Types;
 
 use Perl6::Say;
-use Data::Dump qw(dump);
 
 requires 'element_to_field';
 requires 'field_to_element';
-requires 'element_fields';
 
 sub as_object {
     my $self = shift;
 
     my $obj = +{};
     
-    for my $field ($self->element_fields) {
+    for my $field (@{$self->element_fields}) {
 	my $attr = $self->meta->get_attribute($field);
 
 	my $type         = $attr->type_constraint;
