@@ -128,12 +128,9 @@ do {
         },
     );
 
-    __PACKAGE__->setup(@element_fields);
-
-    for (@element_fields) {
-        my $field = delete $_->{field};
-        delete $_->{typemap};
-        has $field => %$_;
+    my %attrs = __PACKAGE__->setup(@element_fields);
+    while (my ($field, $attr) = each %attrs) {
+        has $field => %$attr;
     }
 };
 

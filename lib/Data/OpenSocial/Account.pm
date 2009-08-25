@@ -41,7 +41,7 @@ do {
 
     my %attrs = __PACKAGE__->setup(@element_fields);
     while ( my ($field, $attr) = each %attrs ) {
-	has $field => %$attr;
+        has $field => %$attr;
     }
 };
 

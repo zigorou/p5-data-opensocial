@@ -11,48 +11,45 @@ do {
     my @element_fields = (
         +{
             field     => 'person_key',
-	    typemap   => 'PersonKey',
+            typemap   => 'PersonKey',
             is        => 'rw',
             isa       => 'Str',
             required  => 0,
         },
         +{
             field     => 'person_key_display_name',
-	    typemap   => 'PersonKey.DisplayName',
+            typemap   => 'PersonKey.DisplayName',
             is        => 'rw',
             isa       => 'Str',
             required  => 0,
         },
         +{
             field     => 'person_key_id',
-	    typemap   => 'PersonKey.Id',
+            typemap   => 'PersonKey.Id',
             is        => 'rw',
             isa       => 'Str',
             required  => 0,
         },
-	+{
-	    field     => 'person_key_profile_url',
-	    typemap   => 'PersonKey.ProfileUrl',
+        +{
+            field     => 'person_key_profile_url',
+            typemap   => 'PersonKey.ProfileUrl',
             is        => 'rw',
             isa       => 'Str',
             required  => 0,
-	},
+        },
         +{
             field     => 'person',
             is        => 'rw',
             isa       => 'OpenSocial.Person',
             required  => 0,
             predicate => 'has_person',
-	    coerce    => 1,
+            coerce    => 1,
         },
     );
 
-    __PACKAGE__->setup(@element_fields);
-
-    for (@element_fields) {
-        my $field = delete $_->{field};
-        delete $_->{typemap};
-        has $field => %$_;
+    my %attrs = __PACKAGE__->setup(@element_fields);
+    while (my ($field, $attr) = each %attrs) {
+        has $field => %$attr;
     }
 };
 

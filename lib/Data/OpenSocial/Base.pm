@@ -26,11 +26,12 @@ sub setup {
     );
 
     return map {
-	my $attr = $_;
-	delete $attr->{typemap};
-	my $field = $attr->{field};
-	$attr->{predicate} = 'has_' . $field;
-	($field, $attr);
+        my $attr = $_;
+        delete $attr->{typemap};
+        my $field = $attr->{field};
+        delete $attr->{field};
+        $attr->{predicate} = 'has_' . $field;
+        ($field, $attr);
     } @element_fields
 }
 
