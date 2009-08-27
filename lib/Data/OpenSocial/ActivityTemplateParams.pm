@@ -2,7 +2,9 @@ package Data::OpenSocial::ActivityTemplateParams;
 
 use Any::Moose;
 
-use Data::OpenSocial::Types qw(OpenSocial.Person);
+use Data::OpenSocial::Types qw(
+    OpenSocial.Person
+);
 
 extends 'Data::OpenSocial::Base';
 with 'Data::OpenSocial::Role::AsObject';

@@ -30,14 +30,7 @@ use Any::Moose (
 );
 use Any::Moose '::Util::TypeConstraints';
 
-use Data::OpenSocial::Account;
-use Data::OpenSocial::Activity;
-use Data::OpenSocial::ActivityTemplateParams;
-use Data::OpenSocial::Address;
-use Data::OpenSocial::Appdata;
-use Data::OpenSocial::Person;
-use Data::OpenSocial::PluralPersonField;
-use Data::OpenSocial::Url;
+use UNIVERSAL::require;
 
 our %PREMITIVE_TYPES = (
     Str	 => 1,
@@ -85,6 +78,9 @@ our %COMPLEX_TYPES = (
     },
     'OpenSocial.Person' => +{
 	class_type => 'Data::OpenSocial::Person',
+	coerce => [
+	    from 'HashRef', via { Data::OpenSocial::Person->require; Data::OpenSocial::Person->new(%$_); },
+	]
     },
     'OpenSocial.PluralPersonField' => +{
 	class_type => 'Data::OpenSocial::PluralPersonField'
@@ -114,66 +110,25 @@ sub is_complex_type {
     exists $COMPLEX_TYPES{$type};
 }
 
-do {
+{
     while ( my ($type, $enums) = each %SIMPLE_TYPES ) {
 	enum $type => @$enums;
     }
 };
 
-do {
-    while (my ($type, $attrs) = each %COMPLEX_TYPES ) {
+{
+    while ( my ($type, $attrs) = each %COMPLEX_TYPES ) {
 	class_type $attrs->{class_type};
 	subtype $type => as $attrs->{class_type};
-    }
-
-    
-#     class_type 'Data::OpenSocial::Account';
-#     subtype 'OpenSocial.Account' => as 'Data::OpenSocial::Account';
-
-#     class_type 'Data::OpenSocial::Address';
-#     subtype 'OpenSocial.Address' => as 'Data::OpenSocial::Address';
-
-#     class_type 'Data::OpenSocial::Appdata';
-#     subtype 'OpenSocial.Appdata' => as 'Data::OpenSocial::Appdata';
-    
-#     class_type 'Data::OpenSocial::Person';
-#     subtype 'OpenSocial.Person' => as 'Data::OpenSocial::Person';
-#     coerce 'OpenSocial.Person'
-# 	=> from 'HashRef'
-# 	=> via {
-# 	    Data::OpenSocial::Person->new(%$_);
-# 	};
-
-#     class_type 'Data::OpenSocial::PluralPersonField';
-#     subtype 'OpenSocial.PluralPersonField' => as 'Data::OpenSocial::PluralPersonField';
-    
-#     class_type 'Data::OpenSocial::Url';
-#     subtype 'OpenSocial.Url' => as 'Data::OpenSocial::Url';
-#     coerce 'OpenSocial.Url'
-# 	=> from 'HashRef'
-# 	=> via {
-# 	    Data::OpenSocial::Url->new(%$_);
-# 	};
-
-    # subtype 'ArrayRef[OpenSocial.Url]' => as 'ArrayRef[Object]';
-    # coerce 'ArrayRef[OpenSocial.Url]'
-# 	=> from 'ArrayRef[HashRef]'
-# 	=> via {
-# 	    my $data = shift;
-# 	    my $ret = [];
-
-# 	    for (@$data) {
-# 		push(@$ret, Data::OpenSocial::Url->new(%$_));
-# 	    }
-
-# 	    $ret;
-# 	};
-
+	if (exists $attrs->{coerce}) {
+	    coerce $type => @{ $attrs->{coerce} }
+	}
+    };
 };
 
 no Any::Moose;
 
-__PACKAGE__->meta->make_immutable;
+1;
 
 __END__
 
