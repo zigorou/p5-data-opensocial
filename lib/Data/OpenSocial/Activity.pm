@@ -3,133 +3,137 @@ package Data::OpenSocial::Activity;
 use Any::Moose;
 
 extends 'Data::OpenSocial::Base';
-with 'Data::OpenSocial::Role::AsObject';
+
+use Data::OpenSocial::Types qw(
+  OpenSocial.MediaItem
+  OpenSocial.ActivityTemplateParams
+);
 
 do {
     my @element_fields = (
         +{
+            namespace => 'http://ns.opensocial.org/2008/opensocial',
             field     => 'app_id',
             is        => 'rw',
             isa       => 'Str',
             default   => 0,
-            predicate => 'has_app_id',
         },
         +{
+            namespace => 'http://ns.opensocial.org/2008/opensocial',
             field     => 'body',
             is        => 'rw',
             isa       => 'Str',
             default   => 0,
-            predicate => 'has_body',
         },
         +{
+            namespace => 'http://ns.opensocial.org/2008/opensocial',
             field     => 'body_id',
             is        => 'rw',
             isa       => 'Str',
             default   => 0,
-            predicate => 'has_body_id',
         },
         +{
+            namespace => 'http://ns.opensocial.org/2008/opensocial',
             field     => 'external_id',
             is        => 'rw',
             isa       => 'Str',
             default   => 0,
-            predicate => 'has_external_id',
         },
         +{
+            namespace => 'http://ns.opensocial.org/2008/opensocial',
             field     => 'id',
             is        => 'rw',
             isa       => 'Str',
             default   => 0,
-            predicate => 'has_id',
         },
         +{
+            namespace => 'http://ns.opensocial.org/2008/opensocial',
             field     => 'media_items',
             is        => 'rw',
-            isa       => 'MediaItem',
+            isa       => 'ArrayRef[OpenSocial.MediaItem]',
             default   => 0,
-            predicate => 'has_media_items',
         },
         +{
+            namespace => 'http://ns.opensocial.org/2008/opensocial',
             field     => 'posted_time',
             is        => 'rw',
             isa       => 'Int',
             default   => 0,
-            predicate => 'has_posted_time',
         },
         +{
+            namespace => 'http://ns.opensocial.org/2008/opensocial',
             field     => 'priority',
             is        => 'rw',
             isa       => 'Int',
             default   => 0,
-            predicate => 'has_priority',
         },
         +{
+            namespace => 'http://ns.opensocial.org/2008/opensocial',
             field     => 'stream_favicon_url',
             is        => 'rw',
             isa       => 'Str',
             default   => 0,
-            predicate => 'has_stream_favicon_url',
         },
         +{
+            namespace => 'http://ns.opensocial.org/2008/opensocial',
             field     => 'stream_source_url',
             is        => 'rw',
             isa       => 'Str',
             default   => 0,
-            predicate => 'has_stream_source_url',
         },
         +{
+            namespace => 'http://ns.opensocial.org/2008/opensocial',
             field     => 'stream_title',
             is        => 'rw',
             isa       => 'Str',
             default   => 0,
-            predicate => 'has_stream_title',
         },
         +{
+            namespace => 'http://ns.opensocial.org/2008/opensocial',
             field     => 'stream_url',
             is        => 'rw',
             isa       => 'Str',
             default   => 0,
-            predicate => 'has_stream_url',
         },
         +{
+            namespace => 'http://ns.opensocial.org/2008/opensocial',
             field     => 'template_params',
             is        => 'rw',
-            isa       => 'ActivityTemplateParams',
+            isa       => 'OpenSocial.ActivityTemplateParams',
             default   => 0,
-            predicate => 'has_template_params',
         },
         +{
+            namespace => 'http://ns.opensocial.org/2008/opensocial',
             field     => 'title',
             is        => 'rw',
             isa       => 'Str',
             default   => 0,
-            predicate => 'has_title',
         },
         +{
+            namespace => 'http://ns.opensocial.org/2008/opensocial',
             field     => 'title_id',
             is        => 'rw',
             isa       => 'Str',
             default   => 0,
-            predicate => 'has_title_id',
         },
         +{
+            namespace => 'http://ns.opensocial.org/2008/opensocial',
             field     => 'url',
             is        => 'rw',
             isa       => 'Str',
             default   => 0,
-            predicate => 'has_url',
         },
         +{
+            namespace => 'http://ns.opensocial.org/2008/opensocial',
             field     => 'user_id',
             is        => 'rw',
             isa       => 'Str',
             default   => 0,
-            predicate => 'has_user_id',
         },
     );
 
     my %attrs = __PACKAGE__->setup(@element_fields);
-    while (my ($field, $attr) = each %attrs) {
+    while ( my ( $field, $attr ) = each %attrs ) {
         has $field => %$attr;
     }
 };

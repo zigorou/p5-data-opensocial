@@ -2,50 +2,61 @@ package Data::OpenSocial::Name;
 
 use Any::Moose;
 
-has 'additional_name' => (
-    is	      => 'rw',
-    isa	      => 'Str',
-    required  => 0,
-    predicate => 'has_additional_name',
-);
+extends 'Data::OpenSocial::Base';
 
-has 'family_name' => (
-    is	      => 'rw',
-    isa	      => 'Str',
-    required  => 0,
-    predicate => 'has_family_name',
-);
+do {
+    my @element_fields = (
+        +{
+            namespace => 'http://ns.opensocial.org/2008/opensocial',
+            field     => 'additional_name',
+            is        => 'rw',
+            isa       => 'Str',
+            required  => 0,
+        },
+        +{
+            namespace => 'http://ns.opensocial.org/2008/opensocial',
+            field     => 'family_name',
+            is        => 'rw',
+            isa       => 'Str',
+            required  => 0,
+        },
+        +{
+            namespace => 'http://ns.opensocial.org/2008/opensocial',
+            field     => 'given_name',
+            is        => 'rw',
+            isa       => 'Str',
+            required  => 0,
+        },
+        +{
+            namespace => 'http://ns.opensocial.org/2008/opensocial',
+            field     => 'honorific_prefix',
+            is        => 'rw',
+            isa       => 'Str',
+            required  => 0,
+        },
+        +{
+            namespace => 'http://ns.opensocial.org/2008/opensocial',
+            field     => 'honorific_suffix',
+            is        => 'rw',
+            isa       => 'Str',
+            required  => 0,
+        },
+        +{
+            namespace => 'http://ns.opensocial.org/2008/opensocial',
+            field     => 'formatted',
+            is        => 'rw',
+            isa       => 'Str',
+            required  => 0,
+        }
+    );
 
-has 'given_name' => (
-    is	      => 'rw',
-    isa	      => 'Str',
-    required  => 0,
-    predicate => 'has_given_name',
-);
-
-has 'honorific_prefix' => (
-    is	      => 'rw',
-    isa	      => 'Str',
-    required  => 0,
-    predicate => 'has_honorific_prefix',
-);
-
-has 'honorific_suffix' => (
-    is	      => 'rw',
-    isa	      => 'Str',
-    required  => 0,
-    predicate => 'has_honorific_suffix',
-);
-
-has 'formatted' => (
-    is	      => 'rw',
-    isa	      => 'Str',
-    required  => 0,
-    predicate => 'has_formatted',
-);
+    my %attrs = __PACKAGE__->setup(@element_fields);
+    while ( my ( $field, $attr ) = each %attrs ) {
+        has $field => %$attr;
+    }
+};
 
 no Any::Moose;
 
 __PACKAGE__->meta->make_immutable;
-
 

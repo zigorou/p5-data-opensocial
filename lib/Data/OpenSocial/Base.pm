@@ -4,9 +4,21 @@ use Any::Moose;
 
 extends 'Moose::Object', 'Class::Data::Inheritable';
 
-for (qw/element_fields element_to_field_map field_to_element_map/) {
+for (
+    qw/element_fields element_to_field_map field_to_element_map
+    namespaces field_to_namespace_map/
+  )
+{
     __PACKAGE__->mk_classdata($_);
 }
+
+__PACKAGE__->namespaces(
+    +{
+        'http://ns.opensocial.org/2008/opensocial' => 'os',
+        'http://www.w3.org/2005/Atom'              => 'atom',
+        'http://a9.com/-/spec/opensearch/1.1'      => 'osearch',
+    },
+);
 
 sub setup {
     my ( $class, @element_fields ) = @_;
@@ -24,15 +36,18 @@ sub setup {
             grep { exists $_->{typemap} } @element_fields
         }
     );
+    $class->field_to_namespace_map(
+        +{ map { ( $_->{field}, $_->{namespace} ) } @element_fields } );
 
     return map {
         my $attr = $_;
         delete $attr->{typemap};
+        delete $attr->{namespace};
         my $field = $attr->{field};
         delete $attr->{field};
         $attr->{predicate} = 'has_' . $field;
-        ($field, $attr);
-    } @element_fields
+        ( $field, $attr );
+    } @element_fields;
 }
 
 sub element_to_field {

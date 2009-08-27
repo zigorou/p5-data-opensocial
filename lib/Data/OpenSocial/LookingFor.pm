@@ -1,34 +1,34 @@
 package Data::OpenSocial::LookingFor;
 
 use Any::Moose;
-use Data::OpenSocial::Types qw(LookingForType);
+use Data::OpenSocial::Types qw(OpenSocial.LookingForType);
 
-with 'Data::OpenSocial::Role::AsObject';
+extends 'Data::OpenSocial::Base';
 
-has 'display_value' => (
-    is	      => 'rw',
-    isa	      => 'Str',
-    required  => 0,
-    predicate => 'has_display_value',
-);
+do {
+    my @element_fields = (
+        +{
+            field     => 'display_value',
+            is        => 'rw',
+            isa       => 'Str',
+            required  => 0,
+            predicate => 'has_display_value',
+        },
+        +{
+            field    => 'value',
+            is       => 'rw',
+            isa      => 'OpenSocial.LookingForType',
+            required => 0,
+        },
+    );
 
-has 'value' => (
-    is	      => 'rw',
-    isa	      => 'LookingForType',
-    required  => 0,
-    predicate => 'has_value',
-);
-
-sub elements_map {
-    +{ display_value => 'displayValue' };
-}
-
-sub element_fields {
-    qw(display_value value);
-}
+    my %attrs = __PACKAGE__->setup(@element_fields);
+    while ( my ( $field, $attr ) = each %attrs ) {
+        has $field => %$attr;
+    }
+};
 
 no Any::Moose;
 
 __PACKAGE__->meta->make_immutable;
-
 

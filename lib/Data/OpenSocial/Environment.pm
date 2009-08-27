@@ -1,31 +1,33 @@
 package Data::OpenSocial::Environment;
 
 use Any::Moose;
-use Data::OpenSocial::Types qw(EnvironmentType);
+use Data::OpenSocial::Types qw(OpenSocial.EnvironmentType);
 
-with 'Data::OpenSocial::Role::AsObject';
+extends 'Data::OpenSocial::Base';
 
-has 'display_value' => (
-    is => 'rw',
-    isa => 'Str',
-    required => 0,
-    predicate => 'has_display_value',
-);
+do {
+    my @element_fields = (
+        +{
+            namespace => 'http://ns.opensocial.org/2008/opensocial',
+            field     => 'display_value',
+            is        => 'rw',
+            isa       => 'Str',
+            required  => 0,
+        },
+        +{
+            namespace => 'http://ns.opensocial.org/2008/opensocial',
+            field     => 'value',
+            is        => 'rw',
+            isa       => 'OpenSocial.EnvironmentType',
+            required  => 0,
+        },
+    );
 
-has 'value' => (
-    is => 'rw',
-    isa => 'EnvironmentType',
-    required => 0,
-    predicate => 'has_value',
-);
-
-sub elements_map {
-    +{ display_value => 'displayValue' };
-}
-
-sub element_fields {
-    qw(display_value value);
-}
+    my %attrs = __PACKAGE__->setup(@element_fields);
+    while ( my ( $field, $attr ) = each %attrs ) {
+        has $field => %$attr;
+    }
+};
 
 no Any::Moose;
 
