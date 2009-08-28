@@ -70,37 +70,101 @@ our %SIMPLE_TYPES = (
 );
 
 our %COMPLEX_TYPES = (
-    'OpenSocial.Account'  => +{ class_type => 'Data::OpenSocial::Account', },
-    'OpenSocial.Activity' => +{ class_type => 'Data::OpenSocial::Activity', },
-    'OpenSocial.ActivityTemplateParams' =>
-      +{ class_type => 'Data::OpenSocial::ActivityTemplateParams', },
-    'OpenSocial.Address' => +{ class_type => 'Data::OpenSocial::Address', },
-    'OpenSocial.Appdata' => +{ class_type => 'Data::OpenSocial::Appdata', },
-    'OpenSocial.AppdataEntry' =>
-      +{ class_type => 'Data::OpenSocial::AppdataEntry', },
-    'OpenSocial.BodyType'  => +{ class_type => 'Data::OpenSocial::BodyType', },
-    'OpenSocial.Drinker'   => +{ class_type => 'Data::OpenSocial::Drinker', },
-    'OpenSocial.Mediaitem' => +{ class_type => 'Data::OpenSocial::MediaItem', },
-    'OpenSocial.Name'      => +{ class_type => 'Data::OpenSocial::Name', },
-    'OpenSocial.NetworkPresence' =>
-      +{ class_type => 'Data::OpenSocial::NetworkPresence', },
-    'OpenSocial.Organization' =>
-      +{ class_type => 'Data::OpenSocial::Organization', },
+    'OpenSocial.Account' => +{
+        class_type => 'Data::OpenSocial::Account',
+        coerce =>
+          [ from 'HashRef', via { Data::OpenSocial::Account->new(%$_); } ],
+    },
+    'OpenSocial.Activity' => +{
+        class_type => 'Data::OpenSocial::Activity',
+        coerce =>
+          [ from 'HashRef', via { Data::OpenSocial::Activity->new(%$_); } ],
+    },
+    'OpenSocial.ActivityTemplateParams' => +{
+        class_type => 'Data::OpenSocial::ActivityTemplateParams',
+        coerce     => [
+            from 'HashRef',
+            via { Data::OpenSocial::ActivityTemplateParams->new(%$_); }
+        ],
+    },
+    'OpenSocial.Address' => +{
+        class_type => 'Data::OpenSocial::Address',
+        coerce =>
+          [ from 'HashRef', via { Data::OpenSocial::Address->new(%$_); } ],
+    },
+    'OpenSocial.Appdata' => +{
+        class_type => 'Data::OpenSocial::Appdata',
+        coerce =>
+          [ from 'HashRef', via { Data::OpenSocial::Appdata->new(%$_); } ]
+    },
+    'OpenSocial.AppdataEntry' => +{
+        class_type => 'Data::OpenSocial::AppdataEntry',
+        coerce =>
+          [ from 'HashRef', via { Data::OpenSocial::AppdataEntry->new(%$_); } ]
+    },
+    'OpenSocial.BodyType' => +{
+        class_type => 'Data::OpenSocial::BodyType',
+        coerce =>
+          [ from 'HashRef', via { Data::OpenSocial::BodyType->new(%$_); } ]
+    },
+    'OpenSocial.Drinker' => +{
+        class_type => 'Data::OpenSocial::Drinker',
+        coerce =>
+          [ from 'HashRef', via { Data::OpenSocial::Drinker->new(%$_); } ]
+    },
+    'OpenSocial.Mediaitem' => +{
+        class_type => 'Data::OpenSocial::MediaItem',
+        coerce =>
+          [ from 'HashRef', via { Data::OpenSocial::MediaItem->new(%$_); } ]
+    },
+    'OpenSocial.Name' => +{
+        class_type => 'Data::OpenSocial::Name',
+        coerce => [ from 'HashRef', via { Data::OpenSocial::Name->new(%$_); } ]
+    },
+    'OpenSocial.NetworkPresence' => +{
+        class_type => 'Data::OpenSocial::NetworkPresence',
+        coerce     => [
+            from 'HashRef',
+            via { Data::OpenSocial::NetworkPresence->new(%$_); }
+        ]
+    },
+    'OpenSocial.Organization' => +{
+        class_type => 'Data::OpenSocial::Organization',
+        coerce =>
+          [ from 'HashRef', via { Data::OpenSocial::Organization->new(%$_); } ]
+    },
     'OpenSocial.Person' => +{
         class_type => 'Data::OpenSocial::Person',
         coerce     => [
             from 'HashRef',
             via {
-                Data::OpenSocial::Person->require;
+
+                # Data::OpenSocial::Person->require;
                 Data::OpenSocial::Person->new(%$_);
             },
         ]
     },
-    'OpenSocial.PluralPersonField' =>
-      +{ class_type => 'Data::OpenSocial::PluralPersonField' },
-    'OpenSocial.Presence' => +{ class_type => 'Data::OpenSocial::Presence', },
-    'OpenSocial.Smoker'   => +{ class_type => 'Data::OpenSocial::Smoker', },
-    'OpenSocial.Url'      => +{ class_type => 'Data::OpenSocial::Url', },
+    'OpenSocial.PluralPersonField' => +{
+        class_type => 'Data::OpenSocial::PluralPersonField',
+        coerce     => [
+            from 'HashRef',
+            via { Data::OpenSocial::PluralPersonField->new(%$_); }
+        ],
+    },
+    'OpenSocial.Presence' => +{
+        class_type => 'Data::OpenSocial::Presence',
+        coerce =>
+          [ from 'HashRef', via { Data::OpenSocial::Presence->new(%$_); } ],
+    },
+    'OpenSocial.Smoker' => +{
+        class_type => 'Data::OpenSocial::Smoker',
+        coerce =>
+          [ from 'HashRef', via { Data::OpenSocial::Smoker->new(%$_); } ],
+    },
+    'OpenSocial.Url' => +{
+        class_type => 'Data::OpenSocial::Url',
+        coerce => [ from 'HashRef', via { Data::OpenSocial::Url->new(%$_); } ],
+    },
 );
 
 sub is_primitive_type {
