@@ -41,8 +41,10 @@ use Any::Moose (
       . any_moose() => [qw/HashRef ArrayRef CodeRef Object Str Bool/],
 );
 use Any::Moose '::Util::TypeConstraints';
+use Any::Moose 'X::Types::DateTime';
 
 use UNIVERSAL::require;
+use DateTime::Format::XSD;
 
 use Data::OpenSocial::AppdataEntry;
 
@@ -98,26 +100,28 @@ our %COMPLEX_TYPES = (
     },
     'OpenSocial.Appdata' => +{
         class_type => 'Data::OpenSocial::Appdata',
-        coerce =>
-          [
-              from 'HashRef' =>
-              via {
-                  Data::OpenSocial::Appdata->new(%$_);
-              },
-          ]
+        coerce     => [
+            from 'HashRef' => via {
+                Data::OpenSocial::Appdata->new(%$_);
+            },
+        ]
     },
     'OpenSocial.AppdataEntry' => +{
         class_type => 'Data::OpenSocial::AppdataEntry',
-        coerce =>
-          [
-              from 'HashRef' =>
-              via {
-                  my $hash = shift;
-                  my %args;
-                  @args{qw/key value/} = @$hash;
-                  Data::OpenSocial::AppdataEntry->new( %args );
-              },
-          ]
+        coerce     => [
+            from 'HashRef' => via {
+                my $hash = shift;
+
+                if ( exists $hash->{key} && exists $hash->{value} ) {
+                    return Data::OpenSocial::AppdataEntry->new(%$hash);
+                }
+                else {
+                    my %args;
+                    @args{qw/key value/} = %$hash;
+                    return Data::OpenSocial::AppdataEntry->new(%args);
+                }
+            },
+        ]
     },
     'OpenSocial.BodyType' => +{
         class_type => 'Data::OpenSocial::BodyType',
@@ -219,51 +223,54 @@ do {
             coerce $type => @{ $attrs->{coerce} };
 
             # subtype "ArrayRef[$type]" => as 'ArrayRef[Object]';
-#             coerce "ArrayRef[$type]" => via {
-#                 my $list = @_;
-#                 return [
-#                     map { $class_name->new(%$_) }
-#                     @$list
-#                 ];
-#             };
+            #             coerce "ArrayRef[$type]" => via {
+            #                 my $list = @_;
+            #                 return [
+            #                     map { $class_name->new(%$_) }
+            #                     @$list
+            #                 ];
+            #             };
         }
     }
 };
 
 do {
-    sub debug {
-        require Data::Dumper;
-        print Dumper(@_);
-        return @_;
+    coerce 'DateTime' => from 'Str' => via {
+        DateTime::Format::XSD->parse_datetime($_);
     };
-    
-    subtype 'OpenSocial.AppdataEntry.Collection' => as 'ArrayRef[OpenSocial.AppdataEntry]';
-    coerce 'OpenSocial.AppdataEntry.Collection'
-        => from 'ArrayRef[HashRef]'
-        => via {
-            if (exists $_->[0]->{key} && exists $_->[0]->{value}) {
-                return [
-                    map { Data::OpenSocial::AppdataEntry->new( %$_ ) }
-                    @$_,
-                ];
-            }
-            else {
-                return [
-                    map { Data::OpenSocial::AppdataEntry->new( key => $_->[0], value => $_->[1] ) }
-                    map { [ %$_ ]; }
-                    @$_,
-                ];
-            }
+
+    subtype 'OpenSocial.AppdataEntry.Collection' => as
+      'ArrayRef[OpenSocial.AppdataEntry]';
+    coerce 'OpenSocial.AppdataEntry.Collection' => from 'ArrayRef[HashRef]' =>
+      via {
+        if ( exists $_->[0]->{key} && exists $_->[0]->{value} ) {
+            return [ map { Data::OpenSocial::AppdataEntry->new(%$_) } @$_, ];
         }
-        => from 'HashRef',
-        => via {
-            my $hash = shift;
+        else {
             return [
-                map { Data::OpenSocial::AppdataEntry->new( key => $_, value => $hash->{$_} ) }
-                sort keys %$hash,
+                map {
+                    Data::OpenSocial::AppdataEntry->new(
+                        key   => $_->[0],
+                        value => $_->[1]
+                      )
+                  }
+                  map { [%$_]; } @$_,
             ];
-        };
-   
+        }
+      } => from 'HashRef',
+      => via {
+        my $hash = shift;
+        return [
+            map {
+                Data::OpenSocial::AppdataEntry->new(
+                    key   => $_,
+                    value => $hash->{$_}
+                  )
+              }
+              sort keys %$hash,
+        ];
+      };
+
 };
 
 no Any::Moose;

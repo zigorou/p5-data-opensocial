@@ -1,44 +1,48 @@
 package Data::OpenSocial::Format::JSON;
 
-use Any::Moose '::Role';
-
 use Data::Dump qw(dump);
 use Perl6::Say;
 use JSON::Any qw(DWIW XS Syck JSON);
 
-sub format_json {
-    my ($self, $is_strict) = @_;
-    
+sub format {
+    my ( $class, $object, $is_strict ) = @_;
+
     my $json = JSON::Any->new;
-    
-    if ($self->isa('Data::OpenSocial::Appdata')) {
-        my %data = map { ($_->key, $_->value) } @{$self->entry};
-        return $json->to_json(\%data);
+    if ( $object->isa('Data::OpenSocial::Appdata') ) {
+        my %data = map { ( $_->key, $_->value ) } @{ $object->entry };
+        return $json->to_json( \%data );
     }
 }
 
-sub parse_json {
-    my ($self, $json_str) = @_;
+sub parse {
+    my ( $class, $class_type, $json_str ) = @_;
+
+    if ( substr( $class_type, 0, 1 ) ne '+' ) {
+        $class_type = 'Data::OpenSocial::' . $class_type;
+    }
+    else {
+        $class_type =~ s/^\+//;
+    }
 
     my $json = JSON::Any->new;
     my $data = $json->from_json($json_str);
 
-    if ($self->isa('Data::OpenSocial::Appdata')) {
-        if (exists $data->{entry}) {
-            # +{ entry: [ { "key": "pokes", "value": 3 }, { "key": "last_poke", "value": "2008-02-13T18:30:02Z" } ] }
-            $self->entry([
-                @{$data->{entry}}
-            ])
+    if ( $class_type->isa('Data::OpenSocial::Appdata') ) {
+        my $object = $class_type->new();
+        if ( exists $data->{entry} ) {
+
+# +{ entry: [ { "key": "pokes", "value": 3 }, { "key": "last_poke", "value": "2008-02-13T18:30:02Z" } ] }
+            $object->entry( [ @{ $data->{entry} } ] );
         }
         else {
+
             # +{ "pokes": 3, "last_poke": "2008-02-13T18:30:02Z" }
-            $self->entry($data);
+            $object->entry($data);
         }
-        return 1;
+
+        return $object;
     }
 }
-
-no Any::Moose '::Role';
 
 1;
 
