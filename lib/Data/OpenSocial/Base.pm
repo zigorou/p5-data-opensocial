@@ -4,6 +4,8 @@ use Any::Moose;
 
 extends 'Moose::Object', 'Class::Data::Inheritable';
 
+with any_moose() . 'X::Object::Pluggable';
+
 for (
     qw/element_fields element_to_field_map field_to_element_map
     namespaces field_to_namespace_map/
@@ -48,6 +50,13 @@ sub setup {
         $attr->{predicate} = 'has_' . $field;
         ( $field, $attr );
     } @element_fields;
+}
+
+sub BUILD {
+    my ($self, $args) = @_;
+
+    $self->_plugin_ns('Format');
+    $self->_plugin_app_ns([ 'Data::OpenSocial',  ]);
 }
 
 sub element_to_field {

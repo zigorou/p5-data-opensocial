@@ -33,6 +33,8 @@ use Any::Moose (
             'OpenSocial.Presence',
             'OpenSocial.Smoker',
             'OpenSocial.Url',
+            ### collection
+            'OpenSocial.AppdataEntry.Collection',
         ]
     ],
     'X::Types::'
@@ -41,6 +43,8 @@ use Any::Moose (
 use Any::Moose '::Util::TypeConstraints';
 
 use UNIVERSAL::require;
+
+use Data::OpenSocial::AppdataEntry;
 
 our %PREMITIVE_TYPES = (
     Str  => 1,
@@ -95,12 +99,25 @@ our %COMPLEX_TYPES = (
     'OpenSocial.Appdata' => +{
         class_type => 'Data::OpenSocial::Appdata',
         coerce =>
-          [ from 'HashRef', via { Data::OpenSocial::Appdata->new(%$_); } ]
+          [
+              from 'HashRef' =>
+              via {
+                  Data::OpenSocial::Appdata->new(%$_);
+              },
+          ]
     },
     'OpenSocial.AppdataEntry' => +{
         class_type => 'Data::OpenSocial::AppdataEntry',
         coerce =>
-          [ from 'HashRef', via { Data::OpenSocial::AppdataEntry->new(%$_); } ]
+          [
+              from 'HashRef' =>
+              via {
+                  my $hash = shift;
+                  my %args;
+                  @args{qw/key value/} = @$hash;
+                  Data::OpenSocial::AppdataEntry->new( %args );
+              },
+          ]
     },
     'OpenSocial.BodyType' => +{
         class_type => 'Data::OpenSocial::BodyType',
@@ -187,20 +204,66 @@ sub is_complex_type {
     exists $COMPLEX_TYPES{$type};
 }
 
-{
+do {
     while ( my ( $type, $enums ) = each %SIMPLE_TYPES ) {
         enum $type => @$enums;
     }
 };
 
-{
+do {
     while ( my ( $type, $attrs ) = each %COMPLEX_TYPES ) {
-        class_type $attrs->{class_type};
-        subtype $type => as $attrs->{class_type};
+        my $class_name = $attrs->{class_type};
+        class_type $class_name;
+        subtype $type => as $class_name;
         if ( exists $attrs->{coerce} ) {
             coerce $type => @{ $attrs->{coerce} };
+
+            # subtype "ArrayRef[$type]" => as 'ArrayRef[Object]';
+#             coerce "ArrayRef[$type]" => via {
+#                 my $list = @_;
+#                 return [
+#                     map { $class_name->new(%$_) }
+#                     @$list
+#                 ];
+#             };
         }
     }
+};
+
+do {
+    sub debug {
+        require Data::Dumper;
+        print Dumper(@_);
+        return @_;
+    };
+    
+    subtype 'OpenSocial.AppdataEntry.Collection' => as 'ArrayRef[OpenSocial.AppdataEntry]';
+    coerce 'OpenSocial.AppdataEntry.Collection'
+        => from 'ArrayRef[HashRef]'
+        => via {
+            if (exists $_->[0]->{key} && exists $_->[0]->{value}) {
+                return [
+                    map { Data::OpenSocial::AppdataEntry->new( %$_ ) }
+                    @$_,
+                ];
+            }
+            else {
+                return [
+                    map { Data::OpenSocial::AppdataEntry->new( key => $_->[0], value => $_->[1] ) }
+                    map { [ %$_ ]; }
+                    @$_,
+                ];
+            }
+        }
+        => from 'HashRef',
+        => via {
+            my $hash = shift;
+            return [
+                map { Data::OpenSocial::AppdataEntry->new( key => $_, value => $hash->{$_} ) }
+                sort keys %$hash,
+            ];
+        };
+   
 };
 
 no Any::Moose;
