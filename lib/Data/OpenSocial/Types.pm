@@ -47,6 +47,7 @@ use UNIVERSAL::require;
 use DateTime::Format::ISO8601;
 
 use Data::OpenSocial::AppdataEntry;
+use Data::OpenSocial::Name;
 
 our %PREMITIVE_TYPES = (
     Str  => 1,

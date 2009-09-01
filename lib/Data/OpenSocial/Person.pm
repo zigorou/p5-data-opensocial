@@ -24,6 +24,7 @@ do {
         +{
             namespace => 'http://ns.opensocial.org/2008/opensocial',
             field     => 'about_me',
+            typemap   => 'aboutMe',
             is        => 'rw',
             isa       => 'Str',
             required  => 0,
@@ -34,6 +35,7 @@ do {
             is        => 'rw',
             isa       => 'OpenSocial.Account',
             required  => 0,
+            coerce    => 1,
         },
         +{
             namespace => 'http://ns.opensocial.org/2008/opensocial',
@@ -48,6 +50,7 @@ do {
             is        => 'rw',
             isa       => 'ArrayRef[OpenSocial.Address]',
             required  => 0,
+            coerce    => 1,
         },
         +{
             namespace => 'http://ns.opensocial.org/2008/opensocial',
@@ -66,9 +69,11 @@ do {
         +{
             namespace => 'http://ns.opensocial.org/2008/opensocial',
             field     => 'app_data',
+            typemap   => 'appData',
             is        => 'rw',
             isa       => 'OpenSocial.Appdata',
             required  => 0,
+            coerce    => 1,
         },
         +{
             namespace => 'http://ns.opensocial.org/2008/opensocial',
@@ -80,9 +85,11 @@ do {
         +{
             namespace => 'http://ns.opensocial.org/2008/opensocial',
             field     => 'body_type',
+            typemap   => 'bodyType',
             is        => 'rw',
             isa       => 'OpenSocial.BodyType',
             required  => 0,
+            coerce    => 1,
         },
         +{
             namespace => 'http://ns.opensocial.org/2008/opensocial',
@@ -111,17 +118,21 @@ do {
             is        => 'rw',
             isa       => 'OpenSocial.Presence',
             required  => 0,
+            coerce    => 1,
         },
         +{
             namespace => 'http://ns.opensocial.org/2008/opensocial',
             field     => 'current_location',
+            typemap   => 'currentLocation',
             is        => 'rw',
             isa       => 'OpenSocial.Address',
             required  => 0,
+            coerce    => 1,
         },
         +{
             namespace => 'http://ns.opensocial.org/2008/opensocial',
             field     => 'display_name',
+            typemap   => 'displayName',
             is        => 'rw',
             isa       => 'Str',
             required  => 0,
@@ -132,6 +143,7 @@ do {
             is        => 'rw',
             isa       => 'OpenSocial.Drinker',
             required  => 0,
+            coerce    => 1,
         },
         +{
             namespace => 'http://ns.opensocial.org/2008/opensocial',
@@ -139,6 +151,7 @@ do {
             is        => 'rw',
             isa       => 'OpenSocial.PluralPersonField',
             required  => 0,
+            coerce    => 1,
         },
         +{
             namespace => 'http://ns.opensocial.org/2008/opensocial',
@@ -171,6 +184,7 @@ do {
         +{
             namespace => 'http://ns.opensocial.org/2008/opensocial',
             field     => 'happiest_when',
+            typemap   => 'happiestWhen',
             is        => 'rw',
             isa       => 'Str',
             required  => 0,
@@ -178,6 +192,7 @@ do {
         +{
             namespace => 'http://ns.opensocial.org/2008/opensocial',
             field     => 'has_app',
+            typemap   => 'hasApp',
             is        => 'rw',
             isa       => 'Bool',
             required  => 0,
@@ -209,6 +224,7 @@ do {
             is        => 'rw',
             isa       => 'OpenSocial.PluralPersonField',
             required  => 0,
+            coerce    => 1,
         },
         +{
             namespace => 'http://ns.opensocial.org/2008/opensocial',
@@ -220,6 +236,7 @@ do {
         +{
             namespace => 'http://ns.opensocial.org/2008/opensocial',
             field     => 'job_interests',
+            typemap   => 'jobInterests',
             is        => 'rw',
             isa       => 'Str',
             required  => 0,
@@ -227,6 +244,7 @@ do {
         +{
             namespace => 'http://ns.opensocial.org/2008/opensocial',
             field     => 'languages_spoken',
+            typemap   => 'languagesSpoken',
             is        => 'rw',
             isa       => 'Str',
             required  => 0,
@@ -234,6 +252,7 @@ do {
         +{
             namespace => 'http://ns.opensocial.org/2008/opensocial',
             field     => 'living_arrangement',
+            typemap   => 'livingArrangement',
             is        => 'rw',
             isa       => 'Str',
             required  => 0,
@@ -241,6 +260,7 @@ do {
         +{
             namespace => 'http://ns.opensocial.org/2008/opensocial',
             field     => 'looking_for',
+            typemap   => 'lookingFor',
             is        => 'rw',
             isa       => 'LookingFor',
             required  => 0,
@@ -265,13 +285,16 @@ do {
             is        => 'rw',
             isa       => 'OpenSocial.Name',
             required  => 0,
+            coerce    => 1,
         },
         +{
             namespace => 'http://ns.opensocial.org/2008/opensocial',
             field     => 'network_presence',
+            typemap   => 'networkPresence',
             is        => 'rw',
             isa       => 'OpenSocial.NetworkPresence',
             required  => 0,
+            coerce    => 1,
         },
         +{
             namespace => 'http://ns.opensocial.org/2008/opensocial',
@@ -286,6 +309,7 @@ do {
             is        => 'rw',
             isa       => 'OpenSocial.Organization',
             required  => 0,
+            coerce    => 1,
         },
         +{
             namespace => 'http://ns.opensocial.org/2008/opensocial',
@@ -297,9 +321,11 @@ do {
         +{
             namespace => 'http://ns.opensocial.org/2008/opensocial',
             field     => 'phone_numbers',
+            typemap   => 'phoneNumbers',
             is        => 'rw',
             isa       => 'OpenSocial.PluralPersonField',
             required  => 0,
+            coerce    => 1,
         },
         +{
             namespace => 'http://ns.opensocial.org/2008/opensocial',
@@ -307,6 +333,7 @@ do {
             is        => 'rw',
             isa       => 'OpenSocial.PluralPersonField',
             required  => 0,
+            coerce    => 1,
         },
         +{
             namespace => 'http://ns.opensocial.org/2008/opensocial',
@@ -328,6 +355,7 @@ do {
             is        => 'rw',
             isa       => 'OpenSocial.Url',
             required  => 0,
+            coerce    => 1,
         },
         +{
             namespace => 'http://ns.opensocial.org/2008/opensocial',
@@ -342,6 +370,7 @@ do {
             is        => 'rw',
             isa       => 'OpenSocial.Url',
             required  => 0,
+            coerce    => 1,
         },
         +{
             namespace => 'http://ns.opensocial.org/2008/opensocial',
@@ -405,6 +434,7 @@ do {
             is        => 'rw',
             isa       => 'OpenSocial.Smoker',
             required  => 0,
+            coerce    => 1,
         },
         +{
             namespace => 'http://ns.opensocial.org/2008/opensocial',
@@ -468,6 +498,7 @@ do {
             is        => 'rw',
             isa       => 'OpenSocial.Url',
             required  => 0,
+            coerce    => 1,
         },
         +{
             namespace => 'http://ns.opensocial.org/2008/opensocial',

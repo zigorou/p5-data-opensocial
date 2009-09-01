@@ -10,7 +10,7 @@ plan tests => 5 * 2;
     use Any::Moose;
     use Data::OpenSocial::Types qw(OpenSocial.Appdata);
 
-    has 'appdata' => (
+    has 'data' => (
         is     => 'rw',
         isa    => 'OpenSocial.Appdata',
         coerce => 1,
@@ -28,7 +28,7 @@ plan tests => 5 * 2;
       Test::Data::OpenSocial::Appdata::IsaType->new(
         appdata => +{ entry => +{ pokes => 3, last_poke => '2008-02-13T18:30:02Z', } } );
 
-    my $data = $type_class->appdata;
+    my $data = $type_class->data;
 
     isa_ok( $data, 'Data::OpenSocial::Appdata' );
     is( $data->entry->[0]->key,   'last_poke' );
@@ -43,7 +43,7 @@ plan tests => 5 * 2;
       Test::Data::OpenSocial::Appdata::IsaType->new(
         appdata => +{ entry => [ +{ pokes => 3, }, +{ last_poke => '2008-02-13T18:30:02Z', }, ] } );
 
-    my $data = $type_class->appdata;
+    my $data = $type_class->data;
 
     isa_ok( $data, 'Data::OpenSocial::Appdata' );
     is( $data->entry->[0]->key,   'pokes' );
