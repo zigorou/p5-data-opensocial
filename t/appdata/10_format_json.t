@@ -26,11 +26,10 @@ diag(
     is( $data->entry->[1]->key,   'pokes' );
     is( $data->entry->[1]->value, 3 );
 
-    is_deeply(
-        scalar $json->from_json(
-            Data::OpenSocial::Format::JSON->format($data) ),
-        $src
-    );
+    my $json_str = Data::OpenSocial::Format::JSON->format($data);
+    note($json_str);
+
+    is_deeply( scalar $json->from_json($json_str), $src );
 }
 
 {
@@ -50,11 +49,9 @@ diag(
     is( $data->entry->[1]->key,   'last_poke' );
     is( $data->entry->[1]->value, '2008-02-13T18:30:02Z' );
 
-    note( Data::OpenSocial::Format::JSON->format($data) );
-
-    is_deeply(
-        scalar $json->from_json(
-            Data::OpenSocial::Format::JSON->format($data) ),
-        +{ pokes => 3, last_poke => "2008-02-13T18:30:02Z", }
-    );
+    my $json_str = Data::OpenSocial::Format::JSON->format($data);
+    note($json_str);
+    
+    is_deeply( scalar $json->from_json($json_str),
+        +{ pokes => 3, last_poke => "2008-02-13T18:30:02Z", } );
 }

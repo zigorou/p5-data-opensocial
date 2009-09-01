@@ -44,7 +44,7 @@ use Any::Moose '::Util::TypeConstraints';
 use Any::Moose 'X::Types::DateTime';
 
 use UNIVERSAL::require;
-use DateTime::Format::XSD;
+use DateTime::Format::ISO8601;
 
 use Data::OpenSocial::AppdataEntry;
 
@@ -188,6 +188,10 @@ our %COMPLEX_TYPES = (
     },
 );
 
+our %COLLECTION_TYPES = (
+    'OpenSocial.AppdataEntry.Collection' => +{},
+);
+
 sub is_primitive_type {
     my ( $class, $type ) = @_;
     exists $PREMITIVE_TYPES{$type};
@@ -206,6 +210,11 @@ sub is_simple_type {
 sub is_complex_type {
     my ( $class, $type ) = @_;
     exists $COMPLEX_TYPES{$type};
+}
+
+sub is_collection_type {
+    my ( $class, $type ) = @_;
+    exists $COLLECTION_TYPES{$type};
 }
 
 do {
@@ -235,9 +244,11 @@ do {
 };
 
 do {
-    coerce 'DateTime' => from 'Str' => via {
-        DateTime::Format::XSD->parse_datetime($_);
-    };
+    coerce 'DateTime'
+        => from 'Str'
+        => via {
+        DateTime::Format::ISO8601->parse_datetime($_);
+    } if (any_moose() eq 'Moose');
 
     subtype 'OpenSocial.AppdataEntry.Collection' => as
       'ArrayRef[OpenSocial.AppdataEntry]';
