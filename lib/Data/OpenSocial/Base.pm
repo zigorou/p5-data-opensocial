@@ -12,32 +12,50 @@ for (
     __PACKAGE__->mk_classdata($_);
 }
 
+__PACKAGE__->element_fields([]);
+__PACKAGE__->element_to_field_map(+{});
+__PACKAGE__->field_to_element_map(+{});
 __PACKAGE__->namespaces(
     +{
         'http://ns.opensocial.org/2008/opensocial' => 'os',
+        'http://opensocial.org/2008/opensocialapi' => 'osapi',
         'http://www.w3.org/2005/Atom'              => 'atom',
         'http://a9.com/-/spec/opensearch/1.1'      => 'osearch',
     },
 );
+__PACKAGE__->field_to_namespace_map(+{});
 
 sub setup {
     my ( $class, @element_fields ) = @_;
 
-    $class->element_fields( [ map { $_->{field} } @element_fields ] );
+    $class->element_fields( [ ( @{$class->element_fields}, map { $_->{field} } @element_fields ) ] );
     $class->element_to_field_map(
         +{
-            map  { @$_{qw/typemap field/} }
-            grep { exists $_->{typemap} } @element_fields
+            %{$class->element_to_field_map},
+            (
+                map  { @$_{qw/typemap field/} }
+                grep { exists $_->{typemap} } @element_fields
+            ),
         }
     );
     $class->field_to_element_map(
         +{
-            map  { @$_{qw/field typemap/} }
-            grep { exists $_->{typemap} } @element_fields
+            %{$class->field_to_element_map},
+            (
+                map  { @$_{qw/field typemap/} }
+                grep { exists $_->{typemap} } @element_fields
+            ),
         }
     );
     $class->field_to_namespace_map(
-        +{ map { ( $_->{field}, $_->{namespace} ) } @element_fields } );
+        +{
+            %{ $class->field_to_namespace_map },
+            (
+                map { ( $_->{field}, $_->{namespace} ) }
+                @element_fields
+            )
+        },
+    );
 
     return map {
         my $attr = $_;

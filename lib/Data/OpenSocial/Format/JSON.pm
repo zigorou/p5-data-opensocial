@@ -6,9 +6,8 @@ use JSON::Any qw(DWIW XS Syck JSON);
 use Data::Util qw(is_array_ref is_hash_ref);
 use DateTime::Format::ISO8601;
 use Data::OpenSocial::Types;
-
-# use Module::Load;
-# use Module::Loaded;
+use Module::Load;
+use Module::Loaded;
 
 sub format {
     my ( $class, $object ) = @_;
@@ -96,8 +95,6 @@ sub parse {
 sub parse_object {
     my ( $class, $class_type, $object ) = @_;
 
-    load $class_type unless ( is_loaded $class_type);
-
     if ( UNIVERSAL::isa( $class_type, 'Data::OpenSocial::Appdata' )
         && !exists $object->{entry} )
     {
@@ -111,6 +108,8 @@ sub parse_object {
         }
     }
 
+    load $class_type unless (is_loaded($class_type));
+    
     my %data;
     for my $element ( keys %$object ) {
         my $field = $class_type->element_to_field($element);

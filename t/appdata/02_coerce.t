@@ -25,8 +25,8 @@ plan tests => 5 * 2;
     # from 'HashRef'
     # provide entry as Hash, ordering sorted by key.
     my $type_class =
-      Test::Data::OpenSocial::Appdata::IsaType->new(
-        appdata => +{ entry => +{ pokes => 3, last_poke => '2008-02-13T18:30:02Z', } } );
+      Test::Data::OpenSocial::Appdata::IsaType->new( data =>
+          +{ entry => +{ pokes => 3, last_poke => '2008-02-13T18:30:02Z', } } );
 
     my $data = $type_class->data;
 
@@ -41,7 +41,7 @@ plan tests => 5 * 2;
     # from 'ArrayRef[HashRef]'
     my $type_class =
       Test::Data::OpenSocial::Appdata::IsaType->new(
-        appdata => +{ entry => [ +{ pokes => 3, }, +{ last_poke => '2008-02-13T18:30:02Z', }, ] } );
+        data => +{ entry => [ +{ pokes => 3, }, +{ last_poke => '2008-02-13T18:30:02Z', }, ] } );
 
     my $data = $type_class->data;
 

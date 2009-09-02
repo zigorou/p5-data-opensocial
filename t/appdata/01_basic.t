@@ -1,6 +1,7 @@
 use strict;
 use Test::More;
 use Data::OpenSocial::Appdata;
+use Data::OpenSocial::AppdataEntry;
 
 diag(
 'refer to http://www.opensocial.org/Technical-Resources/opensocial-spec-v09/REST-API.html#rfc.section.3.5.1'

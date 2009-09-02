@@ -4,7 +4,11 @@ use Any::Moose;
 use Any::Moose ( 'X::Types::DateTime' => [qw/DateTime/], );
 use Any::Moose 'X::AttributeHelpers';
 
-use Data::OpenSocial::Types qw(OpenSocial.Url);
+use Data::OpenSocial::Types qw(
+  OpenSocial.Url
+  OpenSocial.Url.Collection
+  OpenSocial.MessageType
+);
 
 extends 'Data::OpenSocial::Base';
 
@@ -20,6 +24,7 @@ do {
         +{
             namespace => 'http://ns.opensocial.org/2008/opensocial',
             field     => 'body_id',
+            typemap   => 'bodyId',
             is        => 'rw',
             isa       => 'Str',
             required  => 0,
@@ -34,6 +39,7 @@ do {
         +{
             namespace => 'http://ns.opensocial.org/2008/opensocial',
             field     => 'title_id',
+            typemap   => 'titleId',
             is        => 'rw',
             isa       => 'Str',
             required  => 0,
@@ -49,12 +55,13 @@ do {
             namespace => 'http://ns.opensocial.org/2008/opensocial',
             field     => 'recipients',
             is        => 'rw',
-            isa       => 'Str',
+            isa       => 'ArrayRef[Str]',
             required  => 0,
         },
         +{
             namespace => 'http://ns.opensocial.org/2008/opensocial',
             field     => 'sender_id',
+            typemap   => 'senderId',
             is        => 'rw',
             isa       => 'Str',
             required  => 0,
@@ -62,6 +69,7 @@ do {
         +{
             namespace => 'http://ns.opensocial.org/2008/opensocial',
             field     => 'time_sent',
+            typemap   => 'timeSent',
             is        => 'rw',
             isa       => 'DateTime',
             required  => 0,
@@ -70,6 +78,7 @@ do {
         +{
             namespace => 'http://ns.opensocial.org/2008/opensocial',
             field     => 'in_reply_to',
+            typemap   => 'inReplyTo',
             is        => 'rw',
             isa       => 'Str',
             required  => 0,
@@ -78,7 +87,7 @@ do {
             namespace => 'http://ns.opensocial.org/2008/opensocial',
             field     => 'replies',
             is        => 'rw',
-            isa       => 'Str',
+            isa       => 'ArrayRef[Str]',
             required  => 0,
         },
         +{
@@ -91,6 +100,7 @@ do {
         +{
             namespace => 'http://ns.opensocial.org/2008/opensocial',
             field     => 'app_url',
+            typemap   => 'appUrl',
             is        => 'rw',
             isa       => 'Str',
             required  => 0,
@@ -98,8 +108,9 @@ do {
         +{
             namespace => 'http://ns.opensocial.org/2008/opensocial',
             field     => 'collection_ids',
+            typemap   => 'collectionIds',
             is        => 'rw',
-            isa       => 'Str',
+            isa       => 'ArrayRef[Str]',
             required  => 0,
         },
         +{
@@ -115,11 +126,18 @@ do {
             field     => 'urls',
             metaclass => 'Collection::List',
             is        => 'rw',
-            isa       => 'ArrayRef[OpenSocial.Url]',
+            isa       => 'OpenSocial.Url.Collection',
             required  => 0,
             provides  => +{ count => 'count_urls', },
             coerce    => 1,
         },
+        +{ ### specs is wrong
+            namespace => 'http://ns.opensocial.org/2008/opensocial',
+            field     => 'type',
+            is        => 'rw',
+            isa       => 'OpenSocial.MessageType',
+            required  => 0,
+        }
     );
 
     my %attrs = __PACKAGE__->setup(@element_fields);

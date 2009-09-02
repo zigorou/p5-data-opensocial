@@ -11,7 +11,7 @@ use Any::Moose (
             'OpenSocial.PresenceType',
             'OpenSocial.SmokerType',
             'OpenSocial.CreateActivityPriorityType',
-            'OpenSocial.MessageTypeType',
+            'OpenSocial.MessageType',
             'OpenSocial.EnvironmentType',
             'OpenSocial.LookingForType',
             'OpenSocial.NetworkPresenceType',
@@ -20,21 +20,32 @@ use Any::Moose (
             'OpenSocial.Activity',
             'OpenSocial.ActivityTemplateParams',
             'OpenSocial.Address',
+            'OpenSocial.Album',
             'OpenSocial.Appdata',
             'OpenSocial.AppdataEntry',
             'OpenSocial.BodyType',
+            'OpenSocial.CreateActivityPriority',
             'OpenSocial.Drinker',
+            'OpenSocial.Entry',
+            'OpenSocial.Environment',
+            'OpenSocial.EscapeType',
+            'OpenSocial.Group',
+            'OpenSocial.LookingFor',
             'OpenSocial.MediaItem',
+            'OpenSocial.Message',
             'OpenSocial.Name',
             'OpenSocial.NetworkPresence',
             'OpenSocial.Organization',
             'OpenSocial.Person',
             'OpenSocial.PluralPersonField',
             'OpenSocial.Presence',
+            'OpenSocial.Response',
             'OpenSocial.Smoker',
+            'OpenSocial.Types',
             'OpenSocial.Url',
             ### collection
             'OpenSocial.AppdataEntry.Collection',
+            'OpenSocial.Url.Collection',
         ]
     ],
     'X::Types::'
@@ -43,16 +54,15 @@ use Any::Moose (
 use Any::Moose '::Util::TypeConstraints';
 use Any::Moose 'X::Types::DateTime';
 
-use UNIVERSAL::require;
 use DateTime::Format::ISO8601;
-
-use Data::OpenSocial::AppdataEntry;
-use Data::OpenSocial::Name;
+use Module::Load;
+use Module::Loaded;
 
 our %PREMITIVE_TYPES = (
-    Str  => 1,
-    Bool => 1,
-    Int  => 1,
+    Str             => 1,
+    Bool            => 1,
+    Int             => 1,
+    'ArrayRef[Str]' => 1,
 );
 
 our %IMPORTED_TYPES = ( DateTime => 1, );
@@ -66,7 +76,7 @@ our %SIMPLE_TYPES = (
     'OpenSocial.SmokerType' =>
       [qw/HEAVILY NO OCCASIONALLY QUIT QUITTING REGULARLY SOCIALLY YES/],
     'OpenSocial.CreateActivityPriorityType' => [qw/HIGH LOW/],
-    'OpenSocial.MessageTypeType' =>
+    'OpenSocial.MessageType' =>
       [qw/EMAIL NOTIFICATION PRIVATE_MESSAGE PUBLIC_MESSAGE/],
     'OpenSocial.EnvironmentType' => [
         qw/ACTIVITY ADDRESS BODY_TYPE EMAIL FILTER_TYPE MEDIAITEM MESSAGE MESSAGE_TYPE NAME ORGANIZATION PERSON PHONE SORTORDER URL/
@@ -79,31 +89,49 @@ our %SIMPLE_TYPES = (
 our %COMPLEX_TYPES = (
     'OpenSocial.Account' => +{
         class_type => 'Data::OpenSocial::Account',
-        coerce =>
-          [ from 'HashRef', via { Data::OpenSocial::Account->new(%$_); } ],
+        coerce     => [
+            from 'HashRef',
+            via {
+                Data::OpenSocial::Types->create_data( 'Account', $_ );
+            }
+        ],
     },
     'OpenSocial.Activity' => +{
         class_type => 'Data::OpenSocial::Activity',
-        coerce =>
-          [ from 'HashRef', via { Data::OpenSocial::Activity->new(%$_); } ],
+        coerce     => [
+            from 'HashRef',
+            via { Data::OpenSocial::Types->create_data( 'Activity', $_ ); }
+        ],
     },
     'OpenSocial.ActivityTemplateParams' => +{
         class_type => 'Data::OpenSocial::ActivityTemplateParams',
         coerce     => [
             from 'HashRef',
-            via { Data::OpenSocial::ActivityTemplateParams->new(%$_); }
+            via {
+                Data::OpenSocial::Types->create_data( 'ActivityTemplateParams',
+                    $_ );
+            }
         ],
     },
     'OpenSocial.Address' => +{
         class_type => 'Data::OpenSocial::Address',
-        coerce =>
-          [ from 'HashRef', via { Data::OpenSocial::Address->new(%$_); } ],
+        coerce     => [
+            from 'HashRef',
+            via { Data::OpenSocial::Types->create_data( 'Address', $_ ); }
+        ],
+    },
+    'OpenSocial.Album' => +{
+        class_type => 'Data::OpenSocial::Album',
+        coerce     => [
+            from 'HashRef',
+            via { Data::OpenSocial::Types->create_data( 'Album', $_ ); }
+        ],
     },
     'OpenSocial.Appdata' => +{
         class_type => 'Data::OpenSocial::Appdata',
         coerce     => [
             from 'HashRef' => via {
-                Data::OpenSocial::Appdata->new(%$_);
+                Data::OpenSocial::Types->create_data( 'Appdata', $_ );
             },
         ]
     },
@@ -114,55 +142,75 @@ our %COMPLEX_TYPES = (
                 my $hash = shift;
 
                 if ( exists $hash->{key} && exists $hash->{value} ) {
-                    return Data::OpenSocial::AppdataEntry->new(%$hash);
+                    return Data::OpenSocial::Types->create_data( 'AppdataEntry',
+                        $hash );
                 }
                 else {
                     my %args;
                     @args{qw/key value/} = %$hash;
-                    return Data::OpenSocial::AppdataEntry->new(%args);
+                    return Data::OpenSocial::Types->create_data( 'AppdataEntry',
+                        \%args );
                 }
             },
         ]
     },
     'OpenSocial.BodyType' => +{
         class_type => 'Data::OpenSocial::BodyType',
-        coerce =>
-          [ from 'HashRef', via { Data::OpenSocial::BodyType->new(%$_); } ]
+        coerce     => [
+            from 'HashRef',
+            via { Data::OpenSocial::Types->create_data( 'BodyType', $_ ); }
+        ]
     },
     'OpenSocial.Drinker' => +{
         class_type => 'Data::OpenSocial::Drinker',
-        coerce =>
-          [ from 'HashRef', via { Data::OpenSocial::Drinker->new(%$_); } ]
+        coerce     => [
+            from 'HashRef',
+            via { Data::OpenSocial::Types->create_data( 'Drinker', $_ ); }
+        ]
     },
-    'OpenSocial.Mediaitem' => +{
+    'OpenSocial.MediaItem' => +{
         class_type => 'Data::OpenSocial::MediaItem',
-        coerce =>
-          [ from 'HashRef', via { Data::OpenSocial::MediaItem->new(%$_); } ]
+        coerce     => [
+            from 'HashRef',
+            via { Data::OpenSocial::Types->create_data( 'MediaItem', $_ ); }
+        ]
+    },
+    'OpenSocial.Message' => +{
+        class_type => 'Data::OpenSocial::Message',
+        coerce     => [
+            from 'HashRef',
+            via { Data::OpenSocial::Types->create_data( 'Message', $_ ); }
+        ]
     },
     'OpenSocial.Name' => +{
         class_type => 'Data::OpenSocial::Name',
-        coerce => [ from 'HashRef', via { Data::OpenSocial::Name->new(%$_); } ]
+        coerce     => [
+            from 'HashRef',
+            via { Data::OpenSocial::Types->create_data( 'Name', $_ ); }
+        ]
     },
     'OpenSocial.NetworkPresence' => +{
         class_type => 'Data::OpenSocial::NetworkPresence',
         coerce     => [
             from 'HashRef',
-            via { Data::OpenSocial::NetworkPresence->new(%$_); }
+            via {
+                Data::OpenSocial::Types->create_data( 'NetworkPresence', $_ );
+            }
         ]
     },
     'OpenSocial.Organization' => +{
         class_type => 'Data::OpenSocial::Organization',
-        coerce =>
-          [ from 'HashRef', via { Data::OpenSocial::Organization->new(%$_); } ]
+        coerce     => [
+            from 'HashRef',
+            via { Data::OpenSocial::Types->create_data( 'Organization', $_ ); }
+        ]
     },
     'OpenSocial.Person' => +{
         class_type => 'Data::OpenSocial::Person',
         coerce     => [
             from 'HashRef',
             via {
-
-                # Data::OpenSocial::Person->require;
-                Data::OpenSocial::Person->new(%$_);
+                Data::OpenSocial::Types->create_data( 'Person', $_ );
             },
         ]
     },
@@ -170,28 +218,40 @@ our %COMPLEX_TYPES = (
         class_type => 'Data::OpenSocial::PluralPersonField',
         coerce     => [
             from 'HashRef',
-            via { Data::OpenSocial::PluralPersonField->new(%$_); }
+            via { Data::OpenSocial::Types->create_data('PluralPersonField', $_); }
         ],
     },
     'OpenSocial.Presence' => +{
         class_type => 'Data::OpenSocial::Presence',
         coerce =>
-          [ from 'HashRef', via { Data::OpenSocial::Presence->new(%$_); } ],
+          [ from 'HashRef', via { Data::OpenSocial::Types->create_data('Presence', $_); } ],
     },
     'OpenSocial.Smoker' => +{
         class_type => 'Data::OpenSocial::Smoker',
         coerce =>
-          [ from 'HashRef', via { Data::OpenSocial::Smoker->new(%$_); } ],
+          [ from 'HashRef', via { Data::OpenSocial::Types->create_data('Smoker', $_); } ],
     },
     'OpenSocial.Url' => +{
         class_type => 'Data::OpenSocial::Url',
-        coerce => [ from 'HashRef', via { Data::OpenSocial::Url->new(%$_); } ],
+        coerce => [ from 'HashRef', via { Data::OpenSocial::Types->create_data('Url', $_); } ],
     },
 );
 
-our %COLLECTION_TYPES = (
-    'OpenSocial.AppdataEntry.Collection' => +{},
-);
+our %COLLECTION_TYPES = ( 'OpenSocial.AppdataEntry.Collection' => +{}, );
+
+sub create_data {
+    my ( $class, $class_type, $args ) = @_;
+
+    if ( substr( $class_type, 0, 1 ) eq '+' ) {
+        $class_type = substr( $class_type, 1 );
+    }
+    else {
+        $class_type = 'Data::OpenSocial::' . $class_type;
+    }
+
+    load $class_type unless ( is_loaded($class_type) );
+    $class_type->new($args);
+}
 
 sub is_primitive_type {
     my ( $class, $type ) = @_;
@@ -245,44 +305,55 @@ do {
 };
 
 do {
-    coerce 'DateTime'
-        => from 'Str'
-        => via {
+    coerce 'DateTime' => from 'Str' => via {
         DateTime::Format::ISO8601->parse_datetime($_);
-    } if (any_moose() eq 'Moose');
+    }
+    if ( any_moose() eq 'Moose' );
 
     subtype 'OpenSocial.AppdataEntry.Collection' => as
       'ArrayRef[OpenSocial.AppdataEntry]';
-    coerce 'OpenSocial.AppdataEntry.Collection' => from 'ArrayRef[HashRef]' =>
-      via {
-        if ( exists $_->[0]->{key} && exists $_->[0]->{value} ) {
-            return [ map { Data::OpenSocial::AppdataEntry->new(%$_) } @$_, ];
+    coerce 'OpenSocial.AppdataEntry.Collection'
+        => from 'ArrayRef[HashRef]'
+        => via {
+            if ( exists $_->[0]->{key} && exists $_->[0]->{value} ) {
+                return [ map { Data::OpenSocial::Types->create_data('AppdataEntry', $_) } @$_, ];
+            }
+            else {
+                return [
+                    map {
+                        Data::OpenSocial::Types->create_data(
+                            'AppdataEntry', +{
+                                key   => $_->[0],
+                                value => $_->[1],
+                            },
+                        )
+                    }
+                    map { [%$_]; } @$_,
+                ];
+            }
         }
-        else {
+        => from 'HashRef',
+        => via {
+            my $hash = shift;
             return [
                 map {
-                    Data::OpenSocial::AppdataEntry->new(
-                        key   => $_->[0],
-                        value => $_->[1]
-                      )
-                  }
-                  map { [%$_]; } @$_,
+                    Data::OpenSocial::Types->create_data(
+                        'AppdataEntry', +{
+                            key   => $_,
+                            value => $hash->{$_},
+                        },
+                    )
+                }
+                sort keys %$hash,
             ];
-        }
-      } => from 'HashRef',
-      => via {
-        my $hash = shift;
-        return [
-            map {
-                Data::OpenSocial::AppdataEntry->new(
-                    key   => $_,
-                    value => $hash->{$_}
-                  )
-              }
-              sort keys %$hash,
-        ];
-      };
+        };
 
+    subtype 'OpenSocial.Url.Collection' => as 'ArrayRef[OpenSocial.Url]';
+    coerce 'OpenSocial.Url.Collection'
+        => from 'ArrayRef[HashRef]'
+        => via {
+            return [ map { Data::OpenSocial::Types->create_data('Url', $_) } @$_ ];
+        };
 };
 
 no Any::Moose;
