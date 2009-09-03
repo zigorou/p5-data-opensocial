@@ -5,8 +5,6 @@ use JSON::Any;
 use Data::OpenSocial::Appdata;
 use Data::OpenSocial::Format::JSON;
 
-plan tests => 6 * 2;
-
 diag(
 'refer to http://www.opensocial.org/Technical-Resources/opensocial-spec-v09/REST-API.html#rfc.section.3.5.1'
 );
@@ -59,3 +57,5 @@ diag(
     is_deeply( scalar $json->from_json($json_str),
         +{ pokes => 3, last_poke => "2008-02-13T18:30:02Z", } );
 }
+
+done_testing;

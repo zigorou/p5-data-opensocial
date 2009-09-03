@@ -20,7 +20,6 @@ do {
         +{
             namespace => 'http://ns.opensocial.org/2008/opensocial',
             field     => 'thumbnail_url',
-            typemap   => 'thumbnailUrl',
             is        => 'rw',
             isa       => 'Str',
             required  => 0,
@@ -50,7 +49,6 @@ do {
         +{
             namespace => 'http://ns.opensocial.org/2008/opensocial',
             field     => 'owner_id',
-            typemap   => 'ownerId',
             is        => 'rw',
             isa       => 'Str',
             required  => 0,
@@ -58,7 +56,6 @@ do {
         +{
             namespace => 'http://ns.opensocial.org/2008/opensocial',
             field     => 'media_type',
-            typemap   => 'mediaType',
             is        => 'rw',
             isa       => 'OpenSocial.MediaItemType',
             required  => 0,
@@ -67,7 +64,6 @@ do {
         +{
             namespace => 'http://ns.opensocial.org/2008/opensocial',
             field     => 'media_mime_type',
-            typemap   => 'mediaMimeType',
             is        => 'rw',
             isa       => 'Str',
             required  => 0,
@@ -75,7 +71,6 @@ do {
         +{
             namespace => 'http://ns.opensocial.org/2008/opensocial',
             field     => 'media_item_count',
-            typemap   => 'mediaItemCount',
             is        => 'rw',
             isa       => 'Int',
             required  => 0,

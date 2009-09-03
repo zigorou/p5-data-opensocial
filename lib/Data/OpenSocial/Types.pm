@@ -45,6 +45,7 @@ use Any::Moose (
             'OpenSocial.Url',
             ### collection
             'OpenSocial.AppdataEntry.Collection',
+            'OpenSocial.Entry.Collection',
             'OpenSocial.Url.Collection',
         ]
     ],
@@ -131,7 +132,14 @@ our %COMPLEX_TYPES = (
         class_type => 'Data::OpenSocial::Appdata',
         coerce     => [
             from 'HashRef' => via {
-                Data::OpenSocial::Types->create_data( 'Appdata', $_ );
+                my $args = shift;
+
+                if (exists $args->{entry} && keys %$args == 1) {
+                    return Data::OpenSocial::Types->create_data( 'Appdata', $args );
+                }
+                else {
+                    return Data::OpenSocial::Types->create_data( 'Appdata', +{ entry => $args } );
+                }
             },
         ]
     },
@@ -166,6 +174,13 @@ our %COMPLEX_TYPES = (
         coerce     => [
             from 'HashRef',
             via { Data::OpenSocial::Types->create_data( 'Drinker', $_ ); }
+        ]
+    },
+    'OpenSocial.Group' => +{
+        class_type => 'Data::OpenSocial::Group',
+        coerce     => [
+            from 'HashRef',
+            via { Data::OpenSocial::Types->create_data( 'Group', $_ ); }
         ]
     },
     'OpenSocial.MediaItem' => +{
@@ -348,6 +363,9 @@ do {
             ];
         };
 
+    subtype 'OpenSocial.Entry.Collection' => as
+      'ArrayRef[OpenSocial.Entry]';
+    
     subtype 'OpenSocial.Url.Collection' => as 'ArrayRef[OpenSocial.Url]';
     coerce 'OpenSocial.Url.Collection'
         => from 'ArrayRef[HashRef]'

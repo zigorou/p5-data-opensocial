@@ -28,13 +28,17 @@ __PACKAGE__->field_to_namespace_map(+{});
 sub setup {
     my ( $class, @element_fields ) = @_;
 
+    for (@element_fields) {
+        $_->{element} ||= lcfirst join('' => map { ucfirst } split(/_/, $_->{field}) );
+    }
+    
     $class->element_fields( [ ( @{$class->element_fields}, map { $_->{field} } @element_fields ) ] );
     $class->element_to_field_map(
         +{
             %{$class->element_to_field_map},
             (
-                map  { @$_{qw/typemap field/} }
-                grep { exists $_->{typemap} } @element_fields
+                map  { @$_{qw/element field/} }
+                grep { exists $_->{element} } @element_fields
             ),
         }
     );
@@ -42,8 +46,8 @@ sub setup {
         +{
             %{$class->field_to_element_map},
             (
-                map  { @$_{qw/field typemap/} }
-                grep { exists $_->{typemap} } @element_fields
+                map  { @$_{qw/field element/} }
+                grep { exists $_->{element} } @element_fields
             ),
         }
     );
@@ -59,7 +63,7 @@ sub setup {
 
     return map {
         my $attr = $_;
-        delete $attr->{typemap};
+        delete $attr->{element};
         delete $attr->{namespace};
         my $field = $attr->{field};
         delete $attr->{field};
@@ -72,14 +76,14 @@ sub element_to_field {
     my ( $proto, $element ) = @_;
     exists $proto->element_to_field_map->{$element}
       ? $proto->element_to_field_map->{$element}
-      : $element;
+      : '';
 }
 
 sub field_to_element {
     my ( $proto, $field ) = @_;
     exists $proto->field_to_element_map->{$field}
       ? $proto->field_to_element_map->{$field}
-      : $field;
+      : '';
 }
 
 no Any::Moose;

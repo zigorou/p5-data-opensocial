@@ -13,7 +13,6 @@ do {
         +{
             namespace => 'http://ns.opensocial.org/2008/opensocial',
             field     => 'person_key',
-            typemap   => 'PersonKey',
             is        => 'rw',
             isa       => 'Str',
             required  => 0,
@@ -21,7 +20,7 @@ do {
         +{
             namespace => 'http://ns.opensocial.org/2008/opensocial',
             field     => 'person_key_display_name',
-            typemap   => 'PersonKey.DisplayName',
+            element   => 'PersonKey.DisplayName',
             is        => 'rw',
             isa       => 'Str',
             required  => 0,
@@ -29,7 +28,7 @@ do {
         +{
             namespace => 'http://ns.opensocial.org/2008/opensocial',
             field     => 'person_key_id',
-            typemap   => 'PersonKey.Id',
+            element   => 'PersonKey.Id',
             is        => 'rw',
             isa       => 'Str',
             required  => 0,
@@ -37,7 +36,7 @@ do {
         +{
             namespace => 'http://ns.opensocial.org/2008/opensocial',
             field     => 'person_key_profile_url',
-            typemap   => 'PersonKey.ProfileUrl',
+            element   => 'PersonKey.ProfileUrl',
             is        => 'rw',
             isa       => 'Str',
             required  => 0,

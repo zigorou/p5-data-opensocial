@@ -36,7 +36,7 @@ do {
         +{
             namespace => 'http://ns.opensocial.org/2008/opensocial',
             field     => 'thumbnail_url',
-            typemap   => 'thumbnailUrl',
+            element   => 'thumbnailUrl',
             is        => 'rw',
             isa       => 'Str',
             required  => 0,
@@ -72,7 +72,7 @@ do {
         +{
             namespace => 'http://ns.opensocial.org/2008/opensocial',
             field     => 'album_id',
-            typemap   => 'albumId',   
+            element   => 'albumId',   
             is        => 'rw',
             isa       => 'Str',
             required  => 0,
@@ -80,7 +80,7 @@ do {
         +{
             namespace => 'http://ns.opensocial.org/2008/opensocial',
             field     => 'file_size',
-            typemap   => 'fileSize',
+            element   => 'fileSize',
             is        => 'rw',
             isa       => 'Int',
             required  => 0,
@@ -88,7 +88,7 @@ do {
         +{
             namespace => 'http://ns.opensocial.org/2008/opensocial',
             field     => 'start_time',
-            typemap   => 'startTime',
+            element   => 'startTime',
             is        => 'rw',
             isa       => 'DateTime',
             required  => 0,
@@ -103,7 +103,7 @@ do {
         +{
             namespace => 'http://ns.opensocial.org/2008/opensocial',
             field     => 'num_votes',
-            typemap   => 'numVotes',
+            element   => 'numVotes',
             is        => 'rw',
             isa       => 'Int',
             required  => 0,
@@ -111,7 +111,7 @@ do {
         +{
             namespace => 'http://ns.opensocial.org/2008/opensocial',
             field     => 'num_comments',
-            typemap   => 'numComments',
+            element   => 'numComments',
             is        => 'rw',
             isa       => 'Int',
             required  => 0,
@@ -119,7 +119,7 @@ do {
         +{
             namespace => 'http://ns.opensocial.org/2008/opensocial',
             field     => 'num_views',
-            typemap   => 'numViews',
+            element   => 'numViews',
             is        => 'rw',
             isa       => 'Int',
             required  => 0,
@@ -134,7 +134,7 @@ do {
         +{
             namespace => 'http://ns.opensocial.org/2008/opensocial',
             field     => 'tagged_people',
-            typemap   => 'taggedPeople',
+            element   => 'taggedPeople',
             is        => 'rw',
             isa       => 'Str',
             required  => 0,
@@ -142,7 +142,7 @@ do {
         +{
             namespace => 'http://ns.opensocial.org/2008/opensocial',
             field     => 'mime_type',
-            typemap   => 'mimeType',
+            element   => 'mimeType',
             is        => 'rw',
             isa       => 'Str',
             required  => 0,

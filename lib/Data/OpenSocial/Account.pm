@@ -23,7 +23,7 @@ do {
         +{
             namespace => 'http://ns.opensocial.org/2008/opensocial',
             field     => 'user_id',
-            typemap   => 'userid',
+            element   => 'userid',
             is        => 'rw',
             isa       => 'Str',
             required  => 0,
@@ -31,7 +31,7 @@ do {
         +{
             namespace => 'http://ns.opensocial.org/2008/opensocial',
             field     => 'user_name',
-            typemap   => 'username',
+            element   => 'username',
             is        => 'rw',
             isa       => 'Str',
             required  => 0,

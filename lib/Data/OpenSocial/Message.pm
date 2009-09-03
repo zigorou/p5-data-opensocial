@@ -24,7 +24,7 @@ do {
         +{
             namespace => 'http://ns.opensocial.org/2008/opensocial',
             field     => 'body_id',
-            typemap   => 'bodyId',
+            element   => 'bodyId',
             is        => 'rw',
             isa       => 'Str',
             required  => 0,
@@ -39,7 +39,7 @@ do {
         +{
             namespace => 'http://ns.opensocial.org/2008/opensocial',
             field     => 'title_id',
-            typemap   => 'titleId',
+            element   => 'titleId',
             is        => 'rw',
             isa       => 'Str',
             required  => 0,
@@ -61,7 +61,7 @@ do {
         +{
             namespace => 'http://ns.opensocial.org/2008/opensocial',
             field     => 'sender_id',
-            typemap   => 'senderId',
+            element   => 'senderId',
             is        => 'rw',
             isa       => 'Str',
             required  => 0,
@@ -69,7 +69,7 @@ do {
         +{
             namespace => 'http://ns.opensocial.org/2008/opensocial',
             field     => 'time_sent',
-            typemap   => 'timeSent',
+            element   => 'timeSent',
             is        => 'rw',
             isa       => 'DateTime',
             required  => 0,
@@ -78,7 +78,7 @@ do {
         +{
             namespace => 'http://ns.opensocial.org/2008/opensocial',
             field     => 'in_reply_to',
-            typemap   => 'inReplyTo',
+            element   => 'inReplyTo',
             is        => 'rw',
             isa       => 'Str',
             required  => 0,
@@ -100,7 +100,7 @@ do {
         +{
             namespace => 'http://ns.opensocial.org/2008/opensocial',
             field     => 'app_url',
-            typemap   => 'appUrl',
+            element   => 'appUrl',
             is        => 'rw',
             isa       => 'Str',
             required  => 0,
@@ -108,7 +108,7 @@ do {
         +{
             namespace => 'http://ns.opensocial.org/2008/opensocial',
             field     => 'collection_ids',
-            typemap   => 'collectionIds',
+            element   => 'collectionIds',
             is        => 'rw',
             isa       => 'ArrayRef[Str]',
             required  => 0,

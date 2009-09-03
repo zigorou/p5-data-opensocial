@@ -24,7 +24,7 @@ do {
         +{
             namespace => 'http://ns.opensocial.org/2008/opensocial',
             field     => 'about_me',
-            typemap   => 'aboutMe',
+            element   => 'aboutMe',
             is        => 'rw',
             isa       => 'Str',
             required  => 0,
@@ -69,7 +69,7 @@ do {
         +{
             namespace => 'http://ns.opensocial.org/2008/opensocial',
             field     => 'app_data',
-            typemap   => 'appData',
+            element   => 'appData',
             is        => 'rw',
             isa       => 'OpenSocial.Appdata',
             required  => 0,
@@ -85,7 +85,7 @@ do {
         +{
             namespace => 'http://ns.opensocial.org/2008/opensocial',
             field     => 'body_type',
-            typemap   => 'bodyType',
+            element   => 'bodyType',
             is        => 'rw',
             isa       => 'OpenSocial.BodyType',
             required  => 0,
@@ -123,7 +123,7 @@ do {
         +{
             namespace => 'http://ns.opensocial.org/2008/opensocial',
             field     => 'current_location',
-            typemap   => 'currentLocation',
+            element   => 'currentLocation',
             is        => 'rw',
             isa       => 'OpenSocial.Address',
             required  => 0,
@@ -132,7 +132,7 @@ do {
         +{
             namespace => 'http://ns.opensocial.org/2008/opensocial',
             field     => 'display_name',
-            typemap   => 'displayName',
+            element   => 'displayName',
             is        => 'rw',
             isa       => 'Str',
             required  => 0,
@@ -184,7 +184,7 @@ do {
         +{
             namespace => 'http://ns.opensocial.org/2008/opensocial',
             field     => 'happiest_when',
-            typemap   => 'happiestWhen',
+            element   => 'happiestWhen',
             is        => 'rw',
             isa       => 'Str',
             required  => 0,
@@ -192,7 +192,7 @@ do {
         +{
             namespace => 'http://ns.opensocial.org/2008/opensocial',
             field     => 'has_app',
-            typemap   => 'hasApp',
+            element   => 'hasApp',
             is        => 'rw',
             isa       => 'Bool',
             required  => 0,
@@ -236,7 +236,7 @@ do {
         +{
             namespace => 'http://ns.opensocial.org/2008/opensocial',
             field     => 'job_interests',
-            typemap   => 'jobInterests',
+            element   => 'jobInterests',
             is        => 'rw',
             isa       => 'Str',
             required  => 0,
@@ -244,7 +244,7 @@ do {
         +{
             namespace => 'http://ns.opensocial.org/2008/opensocial',
             field     => 'languages_spoken',
-            typemap   => 'languagesSpoken',
+            element   => 'languagesSpoken',
             is        => 'rw',
             isa       => 'Str',
             required  => 0,
@@ -252,7 +252,7 @@ do {
         +{
             namespace => 'http://ns.opensocial.org/2008/opensocial',
             field     => 'living_arrangement',
-            typemap   => 'livingArrangement',
+            element   => 'livingArrangement',
             is        => 'rw',
             isa       => 'Str',
             required  => 0,
@@ -260,7 +260,7 @@ do {
         +{
             namespace => 'http://ns.opensocial.org/2008/opensocial',
             field     => 'looking_for',
-            typemap   => 'lookingFor',
+            element   => 'lookingFor',
             is        => 'rw',
             isa       => 'LookingFor',
             required  => 0,
@@ -290,7 +290,7 @@ do {
         +{
             namespace => 'http://ns.opensocial.org/2008/opensocial',
             field     => 'network_presence',
-            typemap   => 'networkPresence',
+            element   => 'networkPresence',
             is        => 'rw',
             isa       => 'OpenSocial.NetworkPresence',
             required  => 0,
@@ -321,7 +321,7 @@ do {
         +{
             namespace => 'http://ns.opensocial.org/2008/opensocial',
             field     => 'phone_numbers',
-            typemap   => 'phoneNumbers',
+            element   => 'phoneNumbers',
             is        => 'rw',
             isa       => 'OpenSocial.PluralPersonField',
             required  => 0,

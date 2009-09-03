@@ -4,6 +4,17 @@ use Any::Moose;
 
 extends 'Data::OpenSocial::Base';
 
+use Data::OpenSocial::Types qw(
+  OpenSocial.Activity
+  OpenSocial.Album
+  OpenSocial.Appdata
+  OpenSocial.Group
+  OpenSocial.MediaItem
+  OpenSocial.Person
+  OpenSocial.Entry
+  OpenSocial.Entry.Collection
+);
+
 do {
     my @element_fields = (
         +{
@@ -11,98 +22,88 @@ do {
             field     => 'items_per_page',
             is        => 'rw',
             isa       => 'Int',
-            default   => 0,
         },
         +{
             namespace => 'http://a9.com/-/spec/opensearch/1.1',
             field     => 'start_index',
             is        => 'rw',
             isa       => 'Int',
-            default   => 0,
         },
         +{
             namespace => 'http://a9.com/-/spec/opensearch/1.1',
             field     => 'total_results',
             is        => 'rw',
             isa       => 'Int',
-            default   => 0,
         },
         +{
             namespace => 'http://ns.opensocial.org/2008/opensocial',
             field     => 'is_filtered',
             is        => 'rw',
             isa       => 'Bool',
-            default   => 0,
         },
         +{
             namespace => 'http://ns.opensocial.org/2008/opensocial',
             field     => 'is_sorted',
             is        => 'rw',
             isa       => 'Bool',
-            default   => 0,
         },
         +{
             namespace => 'http://ns.opensocial.org/2008/opensocial',
             field     => 'is_updated_since',
             is        => 'rw',
             isa       => 'Bool',
-            default   => 0,
         },
         +{
             namespace => 'http://ns.opensocial.org/2008/opensocial',
             field     => 'group',
             is        => 'rw',
-            isa       => 'Group',
-            default   => 0,
+            isa       => 'OpenSocial.Group',
+            coerce    => 1,
         },
         +{
             namespace => 'http://ns.opensocial.org/2008/opensocial',
             field     => 'activity',
             is        => 'rw',
-            isa       => 'Activity',
-            default   => 0,
+            isa       => 'OpenSocial.Activity',
+            coerce    => 1,
         },
         +{
             namespace => 'http://ns.opensocial.org/2008/opensocial',
             field     => 'person',
             is        => 'rw',
-            isa       => 'Person',
-            default   => 0,
+            isa       => 'OpenSocial.Person',
+            coerce    => 1,
         },
         +{
             namespace => 'http://ns.opensocial.org/2008/opensocial',
             field     => 'album',
             is        => 'rw',
-            isa       => 'Album',
-            default   => 0,
+            isa       => 'OpenSocial.Album',
+            coerce    => 1,
         },
         +{
             namespace => 'http://ns.opensocial.org/2008/opensocial',
             field     => 'media_item',
             is        => 'rw',
-            isa       => 'MediaItem',
-            default   => 0,
+            isa       => 'OpenSocial.MediaItem',
         },
         +{
             namespace => 'http://ns.opensocial.org/2008/opensocial',
             field     => 'message',
             is        => 'rw',
-            isa       => 'Message',
-            default   => 0,
+            isa       => 'OpenSocial.Message',
         },
         +{
             namespace => 'http://ns.opensocial.org/2008/opensocial',
             field     => 'entry',
             is        => 'rw',
-            isa       => 'Entry',
-            default   => 0,
+            isa       => 'OpenSocial.Entry.Collection',
         },
         +{
             namespace => 'http://ns.opensocial.org/2008/opensocial',
             field     => 'map',
             is        => 'rw',
             isa       => 'Any',
-            default   => 0,
         },
     );
 

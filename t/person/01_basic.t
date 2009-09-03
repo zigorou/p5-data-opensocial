@@ -13,8 +13,6 @@ our %defaults = (
     gender       => 'female',
 );
 
-plan tests => ( ( scalar keys %defaults ) + 1 ) * 2;
-
 {
     my $data = Data::OpenSocial::Person->new;
 
@@ -35,3 +33,5 @@ plan tests => ( ( scalar keys %defaults ) + 1 ) * 2;
         is_deeply( $data->$attr, $defaults{$attr}, $attr . ' attr' );
     }
 }
+
+done_testing();

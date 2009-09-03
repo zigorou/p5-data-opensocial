@@ -2,6 +2,15 @@ package Data::OpenSocial::Entry;
 
 use Any::Moose;
 
+use Data::OpenSocial::Types qw(
+  OpenSocial.Activity
+  OpenSocial.Album
+  OpenSocial.Appdata
+  OpenSocial.Group
+  OpenSocial.MediaItem
+  OpenSocial.Person
+);
+
 extends 'Data::OpenSocial::Base';
 
 do {
@@ -10,49 +19,43 @@ do {
             namespace => 'http://ns.opensocial.org/2008/opensocial',
             field     => 'activity',
             is        => 'rw',
-            isa       => 'Activity',
-            default   => 0,
-            predicate => 'has_activity',
+            isa       => 'OpenSocial.Activity',
+            coerce    => 1,
         },
         +{
             namespace => 'http://ns.opensocial.org/2008/opensocial',
             field     => 'person',
             is        => 'rw',
-            isa       => 'Person',
-            default   => 0,
-            predicate => 'has_person',
+            isa       => 'OpenSocial.Person',
+            coerce    => 1,
         },
         +{
             namespace => 'http://ns.opensocial.org/2008/opensocial',
             field     => 'group',
             is        => 'rw',
-            isa       => 'Group',
-            default   => 0,
-            predicate => 'has_group',
+            isa       => 'OpenSocial.Group',
+            coerce    => 1,
         },
         +{
             namespace => 'http://ns.opensocial.org/2008/opensocial',
             field     => 'app_data',
             is        => 'rw',
-            isa       => 'Appdata',
-            default   => 0,
-            predicate => 'has_app_data',
+            isa       => 'OpenSocial.Appdata',
+            coerce    => 1,
         },
         +{
             namespace => 'http://ns.opensocial.org/2008/opensocial',
             field     => 'album',
             is        => 'rw',
-            isa       => 'Album',
-            default   => 0,
-            predicate => 'has_album',
+            isa       => 'OpenSocial.Album',
+            coerce    => 1,
         },
         +{
             namespace => 'http://ns.opensocial.org/2008/opensocial',
             field     => 'media_item',
             is        => 'rw',
-            isa       => 'MediaItem',
-            default   => 0,
-            predicate => 'has_media_item',
+            isa       => 'OpenSocial.MediaItem',
+            coerce    => 1,
         }
     );
 
