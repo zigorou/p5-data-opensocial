@@ -176,6 +176,13 @@ our %COMPLEX_TYPES = (
             via { Data::OpenSocial::Types->create_data( 'Drinker', $_ ); }
         ]
     },
+    'OpenSocial.Entry' => +{
+        class_type => 'Data::OpenSocial::Entry',
+        coerce => [
+            from 'HashRef',
+            via { Data::OpenSocial::Types->create_data( 'Entry', $_ ); },
+        ],
+    },
     'OpenSocial.Group' => +{
         class_type => 'Data::OpenSocial::Group',
         coerce     => [
@@ -240,6 +247,12 @@ our %COMPLEX_TYPES = (
         class_type => 'Data::OpenSocial::Presence',
         coerce =>
           [ from 'HashRef', via { Data::OpenSocial::Types->create_data('Presence', $_); } ],
+    },
+    'OpenSocial.Response' => +{
+        class_type => 'Data::OpenSocial::Response',
+        coerce => [
+            from 'HashRef', via { Data::OpenSocial::Types->create_date('Response', $_); },
+        ],
     },
     'OpenSocial.Smoker' => +{
         class_type => 'Data::OpenSocial::Smoker',
@@ -365,6 +378,11 @@ do {
 
     subtype 'OpenSocial.Entry.Collection' => as
       'ArrayRef[OpenSocial.Entry]';
+    coerce 'OpenSocial.Entry.Collection'
+        => from 'ArrayRef[HashRef]'
+        => via {
+            return [ map { Data::OpenSocial::Types->create_data('Entry', $_) } @$_ ];
+        };
     
     subtype 'OpenSocial.Url.Collection' => as 'ArrayRef[OpenSocial.Url]';
     coerce 'OpenSocial.Url.Collection'

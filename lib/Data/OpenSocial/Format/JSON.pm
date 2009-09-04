@@ -113,18 +113,21 @@ sub parse_object {
     my %data;
     for my $element ( keys %$object ) {
         my $field = $class_type->element_to_field($element);
+        
+        unless ($field) {
+            $data{$element} = $object->{$element};
+            next;
+        }
+        
         $data{$field} = $object->{$element};
 
         my $type = $class_type->meta->get_attribute($field)->type_constraint;
-
-        if ( is_array_ref( $data{$field} ) ) {
-        }
 
         if ( is_hash_ref( $data{$field} ) ) {
             $data{$field} =
               $class->parse_object(
                 $Data::OpenSocial::Types::COMPLEX_TYPES{$type}{class_type},
-                $object->{$field} );
+                $data{$field} );
         }
     }
 

@@ -86,18 +86,21 @@ do {
             field     => 'media_item',
             is        => 'rw',
             isa       => 'OpenSocial.MediaItem',
+            coerce    => 1,
         },
         +{
             namespace => 'http://ns.opensocial.org/2008/opensocial',
             field     => 'message',
             is        => 'rw',
             isa       => 'OpenSocial.Message',
+            coerce    => 1,
         },
         +{
             namespace => 'http://ns.opensocial.org/2008/opensocial',
             field     => 'entry',
             is        => 'rw',
             isa       => 'OpenSocial.Entry.Collection',
+            coerce    => 1,
         },
         +{
             namespace => 'http://ns.opensocial.org/2008/opensocial',
