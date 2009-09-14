@@ -46,6 +46,7 @@ use Any::Moose (
             ### collection
             'OpenSocial.AppdataEntry.Collection',
             'OpenSocial.Entry.Collection',
+            'OpenSocial.MediaItem.Collection',
             'OpenSocial.Url.Collection',
         ]
     ],
@@ -283,6 +284,9 @@ our %COLLECTION_TYPES = (
     },
     'OpenSocial.Entry.Collection'        => +{
         item_class => 'Data::OpenSocial::Entry',
+    },
+    'OpenSocial.MediaItem.Collection'    => +{
+        item_class => 'Data::OpenSocial::MediaItem',
     },
     'OpenSocial.Url.Collection'          => +{
         item_class => 'Data::OpenSocial::Url',

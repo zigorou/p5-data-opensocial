@@ -7,6 +7,7 @@ extends 'Data::OpenSocial::Base';
 
 use Data::OpenSocial::Types qw(
   OpenSocial.MediaItem
+  OpenSocial.MediaItem.Collection
   OpenSocial.ActivityTemplateParams
 );
 
@@ -46,7 +47,7 @@ do {
             namespace => 'http://ns.opensocial.org/2008/opensocial',
             field     => 'media_items',
             is        => 'rw',
-            isa       => 'ArrayRef[OpenSocial.MediaItem]',
+            isa       => 'OpenSocial.MediaItem.Collection',
         },
         +{
             namespace => 'http://ns.opensocial.org/2008/opensocial',

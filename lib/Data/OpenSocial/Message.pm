@@ -24,7 +24,6 @@ do {
         +{
             namespace => 'http://ns.opensocial.org/2008/opensocial',
             field     => 'body_id',
-            element   => 'bodyId',
             is        => 'rw',
             isa       => 'Str',
             required  => 0,
@@ -39,7 +38,6 @@ do {
         +{
             namespace => 'http://ns.opensocial.org/2008/opensocial',
             field     => 'title_id',
-            element   => 'titleId',
             is        => 'rw',
             isa       => 'Str',
             required  => 0,
@@ -61,7 +59,6 @@ do {
         +{
             namespace => 'http://ns.opensocial.org/2008/opensocial',
             field     => 'sender_id',
-            element   => 'senderId',
             is        => 'rw',
             isa       => 'Str',
             required  => 0,
@@ -69,7 +66,6 @@ do {
         +{
             namespace => 'http://ns.opensocial.org/2008/opensocial',
             field     => 'time_sent',
-            element   => 'timeSent',
             is        => 'rw',
             isa       => 'DateTime',
             required  => 0,
@@ -78,7 +74,6 @@ do {
         +{
             namespace => 'http://ns.opensocial.org/2008/opensocial',
             field     => 'in_reply_to',
-            element   => 'inReplyTo',
             is        => 'rw',
             isa       => 'Str',
             required  => 0,
@@ -100,7 +95,6 @@ do {
         +{
             namespace => 'http://ns.opensocial.org/2008/opensocial',
             field     => 'app_url',
-            element   => 'appUrl',
             is        => 'rw',
             isa       => 'Str',
             required  => 0,
@@ -108,7 +102,6 @@ do {
         +{
             namespace => 'http://ns.opensocial.org/2008/opensocial',
             field     => 'collection_ids',
-            element   => 'collectionIds',
             is        => 'rw',
             isa       => 'ArrayRef[Str]',
             required  => 0,
