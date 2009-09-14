@@ -5,8 +5,6 @@ use JSON::Any;
 use Data::OpenSocial::Activity;
 use Data::OpenSocial::Format::JSON;
 
-plan tests => 8 * 1;
-
 diag('refer to http://www.opensocial.org/Technical-Resources/opensocial-spec-v09/REST-API.html#rfc.section.3.4');
 
 {
@@ -37,3 +35,5 @@ diag('refer to http://www.opensocial.org/Technical-Resources/opensocial-spec-v09
     
     is_deeply( scalar $json->from_json($json_str), $src, 'format json' );
 }
+
+done_testing;

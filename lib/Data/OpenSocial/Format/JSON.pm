@@ -25,9 +25,10 @@ sub format_object {
 
         my $type         = $attr->type_constraint;
         my $predicate    = $attr->predicate;
-        my $element_name = $object->field_to_element($field);
 
         next unless ( $object->$predicate );
+        
+        my $element_name = $object->field_to_element($field);
 
         if (   Data::OpenSocial::Types->is_primitive_type($type)
             || Data::OpenSocial::Types->is_simple_type($type) )
@@ -44,6 +45,12 @@ sub format_object {
                 %serialized =
                   ( map { ( $_->key, $_->value ) } @{ $object->entry } );
                 return \%serialized;
+            }
+            else {
+                $serialized{$element_name} = [
+                    map { $class->format_object( $_ ) }
+                    @{$object->$field}
+                ];
             }
         }
         else {
@@ -128,6 +135,17 @@ sub parse_object {
               $class->parse_object(
                 $Data::OpenSocial::Types::COMPLEX_TYPES{$type}{class_type},
                 $data{$field} );
+        }
+        elsif ( is_array_ref( $data{$field} ) ) {
+            $data{$field} = [
+                map {
+                    $class->parse_object(
+                        $Data::OpenSocial::Types::COLLECTION_TYPES{$type}{item_class},
+                        $_
+                    )
+                }
+                @{$data{$field}}
+            ];
         }
     }
 
