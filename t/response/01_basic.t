@@ -36,12 +36,12 @@ diag('response data basic testing');
     my $activity = $data->entry->[0]->activity;
     
     isa_ok($activity, 'Data::OpenSocial::Activity');
-    is($activity->id, $src->{entry}[0]{activity}{id}, '//response/entry[0]/person/id');
-    is($activity->title, $src->{entry}[0]{activity}{title}, '//response/entry[0]/person/title');
+    is($activity->id, $src->{entry}[0]{activity}{id}, '//response/entry[0]/activity/id');
+    is($activity->title, $src->{entry}[0]{activity}{title}, '//response/entry[0]/activity/title');
     isa_ok($activity->updated, 'DateTime');
-    is($activity->body, $src->{entry}[0]{activity}{body}, '//response/entry[0]/person/body');
-    is($activity->body_id, $src->{entry}[0]{activity}{body_id}, '//response/entry[0]/person/bodyId');
-    is($activity->url, $src->{entry}[0]{activity}{url}, '//response/entry[0]/person/url');
+    is($activity->body, $src->{entry}[0]{activity}{body}, '//response/entry[0]/activity/body');
+    is($activity->body_id, $src->{entry}[0]{activity}{body_id}, '//response/entry[0]/activity/bodyId');
+    is($activity->url, $src->{entry}[0]{activity}{url}, '//response/entry[0]/activity/url');
 }
 
 {

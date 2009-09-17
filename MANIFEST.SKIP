@@ -10,6 +10,7 @@
 ^MakeMaker-\d
 \.gz$
 \.cvsignore
+\.git
 ^t/9\d_.*\.t
 ^t/perlcritic
 ^tools/

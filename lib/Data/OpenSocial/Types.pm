@@ -44,6 +44,7 @@ use Any::Moose (
             'OpenSocial.Types',
             'OpenSocial.Url',
             ### collection
+            'OpenSocial.Address.Collection',
             'OpenSocial.AppdataEntry.Collection',
             'OpenSocial.Entry.Collection',
             'OpenSocial.MediaItem.Collection',
@@ -364,6 +365,14 @@ do {
     }
     if ( any_moose() eq 'Moose' );
 
+    subtype 'OpenSocial.Address.Collection' => as 'ArrayRef[OpenSocial.Address]';
+    coerce 'OpenSocial.Address.Collection'
+        => from 'ArrayRef[HashRef]'
+        => via {
+            return [ map { Data::OpenSocial::Types->create_data('Address', $_) } @$_ ];
+        };
+        
+    
     subtype 'OpenSocial.AppdataEntry.Collection' => as
       'ArrayRef[OpenSocial.AppdataEntry]';
     coerce 'OpenSocial.AppdataEntry.Collection' => from 'ArrayRef[HashRef]' =>

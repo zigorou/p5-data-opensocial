@@ -2,7 +2,7 @@ package Data::OpenSocial;
 
 use strict;
 use warnings;
-our $VERSION = '0.01';
+our $VERSION = '0.01_01';
 
 1;
 __END__

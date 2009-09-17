@@ -5,6 +5,7 @@ use Any::Moose 'X::Types::DateTime';
 use Data::OpenSocial::Types qw(
   OpenSocial.Account
   OpenSocial.Address
+  OpenSocial.Address.Collection
   OpenSocial.Appdata
   OpenSocial.BodyType
   OpenSocial.Drinker
@@ -48,7 +49,7 @@ do {
             namespace => 'http://ns.opensocial.org/2008/opensocial',
             field     => 'addresses',
             is        => 'rw',
-            isa       => 'ArrayRef[OpenSocial.Address]',
+            isa       => 'OpenSocial.Address.Collection',
             required  => 0,
             coerce    => 1,
         },
