@@ -280,17 +280,104 @@ our %COMPLEX_TYPES = (
 );
 
 our %COLLECTION_TYPES = (
+    'OpenSocial.Address.Collection' => +{
+        item_class => 'Data::OpenSocial::Address',
+        as         => 'ArrayRef[OpenSocial.Address]',
+        coerce     => [
+            from 'ArrayRef[HashRef]',
+            via {
+                return [
+                    map {
+                        Data::OpenSocial::Types->create_data( 'Address', $_ )
+                      } @$_
+                ];
+            },
+        ],
+    },
     'OpenSocial.AppdataEntry.Collection' => +{
         item_class => 'Data::OpenSocial::AppdataEntry',
+        as         => 'ArrayRef[OpenSocial.AppdataEntry]',
+        coerce     => [
+            from 'ArrayRef[HashRef]',
+            via {
+                if ( exists $_->[0]->{key} && exists $_->[0]->{value} ) {
+                    return [
+                        map {
+                            Data::OpenSocial::Types->create_data(
+                                'AppdataEntry', $_ )
+                          } @$_
+                    ];
+                }
+                else {
+                    return [
+                        map {
+                            Data::OpenSocial::Types->create_data(
+                                'AppdataEntry',
+                                +{
+                                    key   => $_->[0],
+                                    value => $_->[1],
+                                }
+                              )
+                          }
+                          map { [%$_]; } @$_,
+                    ];
+                }
+            },
+            from 'HashRef',
+            via {
+                my $hash = shift;
+                return [
+                    map {
+                        Data::OpenSocial::Types->create_data(
+                            'AppdataEntry',
+                            +{
+                                key   => $_,
+                                value => $hash->{$_},
+                            },
+                          )
+                      }
+                      sort keys %$hash,
+                ];
+            }
+        ],
     },
-    'OpenSocial.Entry.Collection'        => +{
+    'OpenSocial.Entry.Collection' => +{
         item_class => 'Data::OpenSocial::Entry',
+        as         => 'ArrayRef[OpenSocial.Entry]',
+        coerce     => [
+            from 'ArrayRef[HashRef]',
+            via {
+                return [
+                    map { Data::OpenSocial::Types->create_data( 'Entry', $_ ) }
+                      @$_ ];
+            },
+        ],
     },
-    'OpenSocial.MediaItem.Collection'    => +{
+    'OpenSocial.MediaItem.Collection' => +{
         item_class => 'Data::OpenSocial::MediaItem',
+        as         => 'ArrayRef[OpenSocial.MediaItem]',
+        coerce     => [
+            from 'ArrayRef[HashRef]',
+            via {
+                return [
+                    map {
+                        Data::OpenSocial::Types->create_data( 'MediaItem', $_ )
+                      } @$_
+                ];
+            }
+        ],
     },
-    'OpenSocial.Url.Collection'          => +{
+    'OpenSocial.Url.Collection' => +{
         item_class => 'Data::OpenSocial::Url',
+        as         => 'ArrayRef[OpenSocial.Url]',
+        coerce     => [
+            from 'ArrayRef[HashRef]',
+            via {
+                return [
+                    map { Data::OpenSocial::Types->create_data( 'Url', $_ ) }
+                      @$_ ];
+            }
+        ],
     }
 );
 
@@ -346,86 +433,21 @@ do {
         subtype $type => as $class_name;
         if ( exists $attrs->{coerce} ) {
             coerce $type => @{ $attrs->{coerce} };
-
-            # subtype "ArrayRef[$type]" => as 'ArrayRef[Object]';
-            #             coerce "ArrayRef[$type]" => via {
-            #                 my $list = @_;
-            #                 return [
-            #                     map { $class_name->new(%$_) }
-            #                     @$list
-            #                 ];
-            #             };
         }
     }
 };
 
 do {
-    coerce 'DateTime' => from 'Str' => via {
-        DateTime::Format::ISO8601->parse_datetime($_);
+    if ( any_moose() eq 'Moose' ) {
+        coerce 'DateTime' => from 'Str' => via {
+            DateTime::Format::ISO8601->parse_datetime($_);
+        }
     }
-    if ( any_moose() eq 'Moose' );
 
-    subtype 'OpenSocial.Address.Collection' => as 'ArrayRef[OpenSocial.Address]';
-    coerce 'OpenSocial.Address.Collection'
-        => from 'ArrayRef[HashRef]'
-        => via {
-            return [ map { Data::OpenSocial::Types->create_data('Address', $_) } @$_ ];
-        };
-        
-    
-    subtype 'OpenSocial.AppdataEntry.Collection' => as
-      'ArrayRef[OpenSocial.AppdataEntry]';
-    coerce 'OpenSocial.AppdataEntry.Collection' => from 'ArrayRef[HashRef]' =>
-      via {
-        if ( exists $_->[0]->{key} && exists $_->[0]->{value} ) {
-            return [
-                map {
-                    Data::OpenSocial::Types->create_data( 'AppdataEntry', $_ )
-                  } @$_,
-            ];
-        }
-        else {
-            return [
-                map {
-                    Data::OpenSocial::Types->create_data(
-                        'AppdataEntry',
-                        +{
-                            key   => $_->[0],
-                            value => $_->[1],
-                        },
-                      )
-                  }
-                  map { [%$_]; } @$_,
-            ];
-        }
-      } => from 'HashRef',
-      => via {
-        my $hash = shift;
-        return [
-            map {
-                Data::OpenSocial::Types->create_data(
-                    'AppdataEntry',
-                    +{
-                        key   => $_,
-                        value => $hash->{$_},
-                    },
-                  )
-              }
-              sort keys %$hash,
-        ];
-      };
-
-    subtype 'OpenSocial.Entry.Collection' => as 'ArrayRef[OpenSocial.Entry]';
-    coerce 'OpenSocial.Entry.Collection' => from 'ArrayRef[HashRef]' => via {
-        return [ map { Data::OpenSocial::Types->create_data( 'Entry', $_ ) }
-              @$_ ];
-    };
-
-    subtype 'OpenSocial.Url.Collection' => as 'ArrayRef[OpenSocial.Url]';
-    coerce 'OpenSocial.Url.Collection' => from 'ArrayRef[HashRef]' => via {
-        return [ map { Data::OpenSocial::Types->create_data( 'Url', $_ ) }
-              @$_ ];
-    };
+    while ( my ( $type, $attrs ) = each %COLLECTION_TYPES ) {
+        subtype $type => as $attrs->{as};
+        coerce $type  => @{ $attrs->{coerce} };
+    }
 };
 
 no Any::Moose;

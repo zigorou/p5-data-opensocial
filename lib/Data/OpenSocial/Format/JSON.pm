@@ -20,6 +20,11 @@ sub format {
 
 sub format_object {
     my ( $class, $object ) = @_;
+
+    unless (defined $object) {
+        return undef;
+    }
+    
     my %serialized;
 
     for my $field ( @{ $object->element_fields } ) {
@@ -28,7 +33,7 @@ sub format_object {
         my $type         = $attr->type_constraint;
         my $predicate    = $attr->predicate;
 
-        next unless ( $object->$predicate );
+        next unless ( $object->$predicate || $object->exists_in_query_fields($field) );
         
         my $element_name = $object->field_to_element($field);
 
@@ -39,7 +44,7 @@ sub format_object {
         }
         elsif ( Data::OpenSocial::Types->is_imported_type($type) ) {
             if ( $type eq 'DateTime' ) {
-                $serialized{$element_name} = $object->$field->iso8601;
+                $serialized{$element_name} = $object->$field ? $object->$field->iso8601 : undef;
             }
         }
         elsif ( Data::OpenSocial::Types->is_collection_type($type) ) {
@@ -120,6 +125,8 @@ sub parse_object {
     load $class_type unless (is_loaded($class_type));
     
     my %data;
+    $data{query_fields} = +{ map { $_ => 1 } keys %$object };
+    
     for my $element ( keys %$object ) {
         my $field = $class_type->element_to_field($element);
         
@@ -127,6 +134,8 @@ sub parse_object {
             $data{$element} = $object->{$element};
             next;
         }
+
+        next unless (defined $object->{$element});
         
         $data{$field} = $object->{$element};
 

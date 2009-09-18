@@ -1,8 +1,9 @@
 package Data::OpenSocial::Base;
 
 use Any::Moose;
+use Any::Moose 'X::AttributeHelpers';
 
-extends 'Moose::Object', 'Class::Data::Inheritable';
+extends any_moose() . '::Object', 'Class::Data::Inheritable';
 
 for (
     qw/element_fields element_to_field_map field_to_element_map
@@ -24,6 +25,16 @@ __PACKAGE__->namespaces(
     },
 );
 __PACKAGE__->field_to_namespace_map(+{});
+
+has 'query_fields' => (
+    metaclass => 'Collection::Hash',
+    is  => 'rw',
+    isa => 'HashRef',
+    default => sub { +{} },
+    provides => +{
+        exists => 'exists_in_query_fields'
+    }
+);
 
 sub setup {
     my ( $class, @element_fields ) = @_;
