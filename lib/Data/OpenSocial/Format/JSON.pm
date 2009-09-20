@@ -57,8 +57,14 @@ sub format_object {
                 return \%serialized;
             }
             else {
-                $serialized{$element_name} =
-                  [ map { $class->format_object($_) } @{ $object->$field } ];
+                if ( ref $object->$field eq 'ARRAY' ) {
+                    $serialized{$element_name} =
+                        [ map { $class->format_object($_) } @{ $object->$field } ];
+                }
+                else {
+                    $serialized{$element_name} =
+                        $class->format_object($object->$field);
+                }
             }
         }
         else {
@@ -83,15 +89,17 @@ sub parse {
     my $json = JSON::Any->new;
     my $data = $class->parse_object( $class_type, $json->from_json($json_str) );
 
-    # load $class_type unless (is_loaded $class_type);
-
     if ( UNIVERSAL::isa( $class_type, 'Data::OpenSocial::Appdata' ) ) {
         my $object = $class_type->new();
         if ( exists $data->{entry} ) {
-
-            # +{ entry: [ { "key": "pokes", "value": 3 },
-            # { "key": "last_poke", "value": "2008-02-13T18:30:02Z" } ] }
-            $object->entry( [ @{ $data->{entry} } ] );
+            if (ref $data->{entry} eq 'ARRAY') {
+                # +{ entry: [ { "key": "pokes", "value": 3 },
+                $object->entry( [ @{ $data->{entry} } ] );
+            }
+            else {
+                # { "key": "last_poke", "value": "2008-02-13T18:30:02Z" }
+                $object->entry($data->{entry});
+            }
         }
         else {
 
@@ -147,10 +155,22 @@ sub parse_object {
         my $type = $class_type->meta->get_attribute($field)->type_constraint;
 
         if ( is_hash_ref( $data{$field} ) ) {
-            $data{$field} =
-              $class->parse_object(
-                $Data::OpenSocial::Types::COMPLEX_TYPES{$type}{class_type},
-                $data{$field} );
+            if (
+                exists $Data::OpenSocial::Types::COLLECTION_TYPES{$type}
+                {item_class} )
+            {
+                $data{$field} = $class->parse_object(
+                    $Data::OpenSocial::Types::COLLECTION_TYPES{$type}
+                      {item_class},
+                    $data{$field},
+                );
+            }
+            else {
+                $data{$field} = $class->parse_object(
+                    $Data::OpenSocial::Types::COMPLEX_TYPES{$type}{class_type},
+                    $data{$field}
+                );
+            }
         }
         elsif ( is_array_ref( $data{$field} ) ) {
             if (
@@ -160,7 +180,7 @@ sub parse_object {
                 $data{$field} = [
                     map {
                         $class->parse_object(
-                            $Data::OpenSocial::Types::COLLECTION_TYPES{$type}
+                            $Data::OpenSocial::Types::COLLECTION_TYPES{ $type }
                               {item_class},
                             $_
                           )

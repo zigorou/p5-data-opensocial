@@ -58,4 +58,25 @@ diag(
         +{ pokes => 3, last_poke => "2008-02-13T18:30:02Z", } );
 }
 
+{
+    my $src = +{
+        entry => +{ key => 'pokes', value => 3, }
+    };
+
+    my $json = JSON::Any->new;
+    my $data =
+      Data::OpenSocial::Format::JSON->parse( 'Appdata', $json->to_json($src) );
+
+    isa_ok( $data, 'Data::OpenSocial::Appdata' );
+
+    is( $data->entry->[0]->key,   'pokes' );
+    is( $data->entry->[0]->value, 3 );
+
+    my $json_str = Data::OpenSocial::Format::JSON->format($data);
+    note($json_str);
+    
+    is_deeply( scalar $json->from_json($json_str),
+               +{ pokes => 3 } );
+}
+
 done_testing;

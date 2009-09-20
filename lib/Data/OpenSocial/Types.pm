@@ -292,6 +292,11 @@ our %COLLECTION_TYPES = (
                       } @$_
                 ];
             },
+            from 'HashRef',
+            via {
+                return [
+                    Data::OpenSocial::Types->create_data( 'Address', $_ ) ];
+            },
         ],
     },
     'OpenSocial.AppdataEntry.Collection' => +{
@@ -326,19 +331,29 @@ our %COLLECTION_TYPES = (
             from 'HashRef',
             via {
                 my $hash = shift;
-                return [
-                    map {
+
+                if ( exists $hash->{key} && exists $hash->{value} ) {
+                    return [
                         Data::OpenSocial::Types->create_data(
-                            'AppdataEntry',
-                            +{
-                                key   => $_,
-                                value => $hash->{$_},
-                            },
-                          )
-                      }
-                      grep { !ref $hash->{$_} }
-                      sort keys %$hash,
-                ];
+                            'AppdataEntry', $hash,
+                        ),
+                    ];
+                }
+                else {
+                    return [
+                        map {
+                            Data::OpenSocial::Types->create_data(
+                                'AppdataEntry',
+                                +{
+                                    key   => $_,
+                                    value => $hash->{$_},
+                                },
+                              )
+                          }
+                          grep { !ref $hash->{$_} }
+                          sort keys %$hash,
+                    ];
+                }
             }
         ],
     },
@@ -351,6 +366,10 @@ our %COLLECTION_TYPES = (
                 return [
                     map { Data::OpenSocial::Types->create_data( 'Entry', $_ ) }
                       @$_ ];
+            },
+            from 'HashRef',
+            via {
+                return [ Data::OpenSocial::Types->create_data( 'Entry', $_ ) ];
             },
         ],
     },
@@ -365,7 +384,12 @@ our %COLLECTION_TYPES = (
                         Data::OpenSocial::Types->create_data( 'MediaItem', $_ )
                       } @$_
                 ];
-            }
+            },
+            from 'HashRef',
+            via {
+                return [
+                    Data::OpenSocial::Types->create_data( 'MediaItem', $_ ) ];
+            },
         ],
     },
     'OpenSocial.Url.Collection' => +{
@@ -377,7 +401,11 @@ our %COLLECTION_TYPES = (
                 return [
                     map { Data::OpenSocial::Types->create_data( 'Url', $_ ) }
                       @$_ ];
-            }
+            },
+            from 'HashRef',
+            via {
+                return [ Data::OpenSocial::Types->create_data( 'Url', $_ ) ];
+            },
         ],
     }
 );
