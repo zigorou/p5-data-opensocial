@@ -21,20 +21,22 @@ sub format {
 sub format_object {
     my ( $class, $object ) = @_;
 
-    unless (defined $object) {
+    unless ( defined $object ) {
         return undef;
     }
-    
+
     my %serialized;
 
     for my $field ( @{ $object->element_fields } ) {
         my $attr = $object->meta->get_attribute($field);
 
-        my $type         = $attr->type_constraint;
-        my $predicate    = $attr->predicate;
+        my $type      = $attr->type_constraint;
+        my $predicate = $attr->predicate;
 
-        next unless ( $object->$predicate || $object->exists_in_query_fields($field) );
-        
+        next
+          unless ( $object->$predicate
+            || $object->exists_in_query_fields($field) );
+
         my $element_name = $object->field_to_element($field);
 
         if (   Data::OpenSocial::Types->is_primitive_type($type)
@@ -44,7 +46,8 @@ sub format_object {
         }
         elsif ( Data::OpenSocial::Types->is_imported_type($type) ) {
             if ( $type eq 'DateTime' ) {
-                $serialized{$element_name} = $object->$field ? $object->$field->iso8601 : undef;
+                $serialized{$element_name} =
+                  $object->$field ? $object->$field->iso8601 : undef;
             }
         }
         elsif ( Data::OpenSocial::Types->is_collection_type($type) ) {
@@ -54,10 +57,8 @@ sub format_object {
                 return \%serialized;
             }
             else {
-                $serialized{$element_name} = [
-                    map { $class->format_object( $_ ) }
-                    @{$object->$field}
-                ];
+                $serialized{$element_name} =
+                  [ map { $class->format_object($_) } @{ $object->$field } ];
             }
         }
         else {
@@ -122,21 +123,25 @@ sub parse_object {
         }
     }
 
-    load $class_type unless (is_loaded($class_type));
-    
+    load $class_type unless ( is_loaded($class_type) );
+
     my %data;
-    $data{query_fields} = +{ map { $_ => 1 } keys %$object };
-    
+    $data{query_fields} = +{
+        map { $_ => 1 }
+        grep { $_ }
+        map  { $class_type->element_to_field($_) } keys %$object
+    };
+
     for my $element ( keys %$object ) {
         my $field = $class_type->element_to_field($element);
-        
+
         unless ($field) {
             $data{$element} = $object->{$element};
             next;
         }
 
-        next unless (defined $object->{$element});
-        
+        next unless ( defined $object->{$element} );
+
         $data{$field} = $object->{$element};
 
         my $type = $class_type->meta->get_attribute($field)->type_constraint;
@@ -148,15 +153,18 @@ sub parse_object {
                 $data{$field} );
         }
         elsif ( is_array_ref( $data{$field} ) ) {
-            if (exists $Data::OpenSocial::Types::COLLECTION_TYPES{$type}{item_class}) {
+            if (
+                exists $Data::OpenSocial::Types::COLLECTION_TYPES{$type}
+                {item_class} )
+            {
                 $data{$field} = [
                     map {
                         $class->parse_object(
-                            $Data::OpenSocial::Types::COLLECTION_TYPES{$type}{item_class},
+                            $Data::OpenSocial::Types::COLLECTION_TYPES{$type}
+                              {item_class},
                             $_
-                        )
-                    }
-                    @{$data{$field}}
+                          )
+                      } @{ $data{$field} }
                 ];
             }
         }

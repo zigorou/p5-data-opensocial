@@ -87,7 +87,7 @@ our $json = JSON::Any->new;
     my $data =
       Data::OpenSocial::Format::JSON->parse( 'Entry', $json->to_json($src) );
 
-    isa_ok( $data,         'Data::OpenSocial::Entry' );
+    isa_ok( $data,           'Data::OpenSocial::Entry' );
     isa_ok( $data->app_data, 'Data::OpenSocial::Appdata' );
 
     my $json_str = Data::OpenSocial::Format::JSON->format($data);
@@ -101,6 +101,7 @@ our $json = JSON::Any->new;
         album => +{
             id           => '44332211',
             thumbnailUrl => 'http://pages.example.org/albums/4433221-tn.png',
+
             # caption      => 'Example Album', # spec is wrong?
             description =>
 'This is an example album, and this text is an example description',

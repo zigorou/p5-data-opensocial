@@ -336,6 +336,7 @@ our %COLLECTION_TYPES = (
                             },
                           )
                       }
+                      grep { !ref $hash->{$_} }
                       sort keys %$hash,
                 ];
             }
