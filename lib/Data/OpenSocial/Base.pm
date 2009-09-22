@@ -36,6 +36,27 @@ has 'query_fields' => (
     }
 );
 
+around 'BUILDARGS' => sub {
+    my $orig = shift;
+    my $class = shift;
+
+    my $args = ( @_ == 1 && ref $_[0] ) ? $_[0] : +{ @_ };
+    $args->{query_fields} ||= +{};
+    
+    for my $key (keys %$args) {
+        next if ($key eq 'query_fields');
+        my $field = $class->element_to_field_map->{$key} || $key;
+        $args->{query_fields}{$field} = 1;
+        unless (defined $args->{$key}) {
+            delete $args->{$key};
+            next;
+        }
+        $args->{$field} = delete $args->{$key} if ($key ne $field);
+    }
+
+    $class->$orig($args);
+};
+
 sub setup {
     my ( $class, @element_fields ) = @_;
 
