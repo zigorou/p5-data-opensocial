@@ -1,7 +1,6 @@
 package Data::OpenSocial::Format::JSON;
 
-use strict;
-use warnings;
+use Any::Moose;
 
 use JSON::Any qw(DWIW XS Syck JSON);
 use Data::Util qw(is_array_ref is_hash_ref);
@@ -28,8 +27,7 @@ sub format_object {
     my %serialized;
 
     for my $field ( @{ $object->element_fields } ) {
-        my $attr = $object->meta->get_attribute($field);
-
+        my $attr      = $class->_find_attribute_by_name($object, $field);
         my $type      = $attr->type_constraint;
         my $predicate = $attr->predicate;
 
@@ -152,7 +150,7 @@ sub parse_object {
 
         $data{$field} = $object->{$element};
 
-        my $type = $class_type->meta->get_attribute($field)->type_constraint;
+        my $type = $class->_find_attribute_by_name($class_type, $field)->type_constraint;
 
         if ( is_hash_ref( $data{$field} ) ) {
             if (
@@ -193,6 +191,19 @@ sub parse_object {
     return \%data;
 }
 
-1;
+*_find_attribute_by_name = (any_moose eq 'Moose') ?
+    sub { $_[1]->meta->find_attribute_by_name($_[2]); } :
+    sub {
+        my ($class, $object, $name) = @_;
+        return $object->meta->get_attribute($name) if ($object->meta->has_attribute($name));
+        for my $subclass ($object->meta->superclasses) {
+            next unless ($subclass->meta->has_attribute($name));
+            return $subclass->meta->get_attribute($name);
+        }
+    };
+
+no Any::Moose;
+
+__PACKAGE__->meta->make_immutable;
 
 __END__

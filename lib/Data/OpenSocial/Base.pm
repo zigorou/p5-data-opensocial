@@ -40,7 +40,7 @@ around 'BUILDARGS' => sub {
     my $orig = shift;
     my $class = shift;
 
-    my $args = ( @_ == 1 && ref $_[0] ) ? $_[0] : +{ @_ };
+    my $args = ( @_ == 1 && ref $_[0] ) ? +{ %{$_[0]} } : +{ @_ };
     $args->{query_fields} ||= +{};
     
     for my $key (keys %$args) {
