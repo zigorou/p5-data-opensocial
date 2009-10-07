@@ -71,21 +71,25 @@ sub format_object {
         }
     }
 
+    if ($object->isa('Data::OpenSocial::Entry')) {
+        return $serialized{$object->field_to_element($object->entry_type)};
+    }
+    
     return \%serialized;
 }
 
 sub parse {
-    my ( $class, $class_type, $json_str ) = @_;
+    my ( $class, $class_type, $json_str, $opts ) = @_;
 
     if ( substr( $class_type, 0, 1 ) ne '+' ) {
         $class_type = 'Data::OpenSocial::' . $class_type;
     }
     else {
-        $class_type =~ s/^\+//;
+        $class_type = substr($class_type, 1);
     }
 
     my $json = JSON::Any->new;
-    my $data = $class->parse_object( $class_type, $json->from_json($json_str) );
+    my $data = $class->parse_object( $class_type, scalar $json->from_json($json_str), $opts );
 
     if ( UNIVERSAL::isa( $class_type, 'Data::OpenSocial::Appdata' ) ) {
         my $object = $class_type->new();
@@ -114,8 +118,10 @@ sub parse {
 }
 
 sub parse_object {
-    my ( $class, $class_type, $object ) = @_;
+    my ( $class, $class_type, $object, $opts ) = @_;
 
+    load $class_type unless ( is_loaded($class_type) );
+    
     if ( UNIVERSAL::isa( $class_type, 'Data::OpenSocial::Appdata' )
         && !exists $object->{entry} )
     {
@@ -128,9 +134,17 @@ sub parse_object {
             delete $object->{$_};
         }
     }
-
-    load $class_type unless ( is_loaded($class_type) );
-
+    elsif ( UNIVERSAL::isa($class_type, 'Data::OpenSocial::Entry') && exists $opts->{entry_type} ) {
+        ### src : { "pokes": 3, "last_poke": "2008-02-13T18:30:02Z" }
+        ### dst : { "app_data": { "pokes": 3, "last_poke": "2008-02-13T18:30:02Z" } }
+        $object->{$opts->{entry_type}} = $object;
+        delete $opts->{entry_type};
+    }
+    elsif ( UNIVERSAL::isa($class_type, 'Data::OpenSocial::Response') && exists $object->{entry} && exists $opts->{entry_type} ) {
+        $object->{entry} = [ map { +{ $opts->{entry_type} => $_ } } @{$object->{entry}} ];
+        delete $opts->{entry_type};
+    }
+    
     my %data;
     $data{query_fields} = +{
         map { $_ => 1 }
@@ -161,12 +175,14 @@ sub parse_object {
                     $Data::OpenSocial::Types::COLLECTION_TYPES{$type}
                       {item_class},
                     $data{$field},
+                    $opts,
                 );
             }
             else {
                 $data{$field} = $class->parse_object(
                     $Data::OpenSocial::Types::COMPLEX_TYPES{$type}{class_type},
-                    $data{$field}
+                    $data{$field},
+                    $opts,
                 );
             }
         }
@@ -180,7 +196,8 @@ sub parse_object {
                         $class->parse_object(
                             $Data::OpenSocial::Types::COLLECTION_TYPES{ $type }
                               {item_class},
-                            $_
+                            $_,
+                            $opts,
                           )
                       } @{ $data{$field} }
                 ];

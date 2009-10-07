@@ -136,7 +136,7 @@ our %COMPLEX_TYPES = (
             from 'HashRef' => via {
                 my $args = shift;
 
-                if ( exists $args->{entry} && keys %$args == 1 ) {
+                if ( exists $args->{entry} ) {
                     return Data::OpenSocial::Types->create_data( 'Appdata',
                         $args );
                 }

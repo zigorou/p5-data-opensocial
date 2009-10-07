@@ -22,6 +22,13 @@ do {
             required  => 0,
             coerce    => 1,
         },
+        +{
+            namespace => 'http://ns.opensocial.org/2008/opensocial',
+            field     => 'person_id',
+            is        => 'rw',
+            isa       => 'Str',
+            required  => 0,
+        },
     );
 
     my %attrs = __PACKAGE__->setup(@element_fields);

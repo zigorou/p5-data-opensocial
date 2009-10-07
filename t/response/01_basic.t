@@ -234,6 +234,126 @@ diag('response data basic testing');
     my $src = +{
         start_index    => 1,
         items_per_page => 10,
+        total_results  => 2,
+        entry => [
+            +{
+                app_data => +{
+                    person_id => '34KJDCSKJN2HHF0DW20394',
+                    entry => +{
+                        pokes     => 3,
+                        last_poke => '2008-02-13T18:30:02Z',
+                    },
+                },
+            },
+            +{
+                app_data => +{
+                    person_id => '58UIDCSIOP233FDKK3HD44',
+                    entry => +{
+                        pokes => 2,
+                        last_poke => '2007-12-16T18:30:02Z',
+                    },
+                },
+            },
+        ],
+    };
+
+    my $data = Data::OpenSocial::Response->new( $src );
+    isa_ok( $data, 'Data::OpenSocial::Response' );
+
+    is($data->start_index, $src->{start_index}, '//response/startIndex');
+    is($data->items_per_page, $src->{items_per_page}, '//response/itemsPerPage');
+    is($data->total_results, $src->{total_results}, '//response/totalResults');
+
+    my $i = 0;
+    for my $dst (map { $_->app_data } @{$data->entry}) {
+        isa_ok( $dst, 'Data::OpenSocial::Appdata' );
+
+        note(explain($dst));
+        
+        is( $dst->person_id, $src->{entry}[$i]{app_data}{person_id}, "//response/entry[$i]/appdata/personId");
+        is( $dst->entry->[0]->key, 'last_poke', "//response/entry[$i]/appdata/entry[0]/key" );
+        is( $dst->entry->[0]->value,
+            $src->{entry}[$i]{app_data}{entry}{last_poke}, "//response/entry[$i]/appdata/entry[0]/value" );
+        is( $dst->entry->[1]->key,   'pokes', "//response/entry[$i]/appdata/entry[1]/key" );
+        is( $dst->entry->[1]->value, $src->{entry}[$i]{app_data}{entry}{pokes},       "//response/entry[$i]/appdata/entry[1]/value" );
+        
+        $i++;
+    }
+    
+    my $dst = $data->entry->[0]->app_data;
+    isa_ok( $dst, 'Data::OpenSocial::Appdata' );
+
+    is( $dst->entry->[0]->key, 'last_poke', '//response/entry[0]/appdata/entry[0]/key' );
+    is( $dst->entry->[0]->value,
+        '2008-02-13T18:30:02Z', '//response/entry[0]/appdata/entry[0]/value' );
+    is( $dst->entry->[1]->key,   'pokes', '//response/entry[0]/appdata/entry[1]/key' );
+    is( $dst->entry->[1]->value, 3,       '//response/entry[0]/appdata/entry[1]/value' );
+}
+
+{
+    my $src = +{
+        start_index    => 1,
+        items_per_page => 10,
+        total_results  => 2,
+        entry => [
+            +{
+                app_data => +{
+                    person_id => '34KJDCSKJN2HHF0DW20394',
+                    entry => +{
+                        pokes     => 3,
+                        last_poke => '2008-02-13T18:30:02Z',
+                    },
+                },
+            },
+            +{
+                app_data => +{
+                    person_id => '58UIDCSIOP233FDKK3HD44',
+                    entry => +{
+                        pokes => 2,
+                        last_poke => '2007-12-16T18:30:02Z',
+                    },
+                },
+            },
+        ],
+    };
+
+    my $data = Data::OpenSocial::Response->new( $src );
+    isa_ok( $data, 'Data::OpenSocial::Response' );
+
+    is($data->start_index, $src->{start_index}, '//response/startIndex');
+    is($data->items_per_page, $src->{items_per_page}, '//response/itemsPerPage');
+    is($data->total_results, $src->{total_results}, '//response/totalResults');
+
+    my $i = 0;
+    for my $dst (map { $_->app_data } @{$data->entry}) {
+        isa_ok( $dst, 'Data::OpenSocial::Appdata' );
+
+        note(explain($dst));
+        
+        is( $dst->person_id, $src->{entry}[$i]{app_data}{person_id}, "//response/entry[$i]/appdata/personId");
+        is( $dst->entry->[0]->key, 'last_poke', "//response/entry[$i]/appdata/entry[0]/key" );
+        is( $dst->entry->[0]->value,
+            $src->{entry}[$i]{app_data}{entry}{last_poke}, "//response/entry[$i]/appdata/entry[0]/value" );
+        is( $dst->entry->[1]->key,   'pokes', "//response/entry[$i]/appdata/entry[1]/key" );
+        is( $dst->entry->[1]->value, $src->{entry}[$i]{app_data}{entry}{pokes},       "//response/entry[$i]/appdata/entry[1]/value" );
+        
+        $i++;
+    }
+    
+    my $dst = $data->entry->[0]->app_data;
+    isa_ok( $dst, 'Data::OpenSocial::Appdata' );
+
+    is( $dst->entry->[0]->key, 'last_poke', '//response/entry[0]/appdata/entry[0]/key' );
+    is( $dst->entry->[0]->value,
+        '2008-02-13T18:30:02Z', '//response/entry[0]/appdata/entry[0]/value' );
+    is( $dst->entry->[1]->key,   'pokes', '//response/entry[0]/appdata/entry[1]/key' );
+    is( $dst->entry->[1]->value, 3,       '//response/entry[0]/appdata/entry[1]/value' );
+}
+
+{
+    my $src = +{
+        start_index    => 1,
+        items_per_page => 10,
         total_results  => 100,
         entry => [
             +{

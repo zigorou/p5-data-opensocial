@@ -29,9 +29,9 @@ our $json = JSON::Any->new;
     isa_ok( $data->activity, 'Data::OpenSocial::Activity' );
 
     my $json_str = Data::OpenSocial::Format::JSON->format($data);
-    note($json_str);
+    note(sprintf('[entry_type %s] %s', $data->entry_type, $json_str));
 
-    is_deeply( scalar $json->from_json($json_str), $src );
+    is_deeply( scalar $json->from_json($json_str), $src->{activity} );
 }
 
 {
@@ -51,9 +51,9 @@ our $json = JSON::Any->new;
     isa_ok( $data->person, 'Data::OpenSocial::Person' );
 
     my $json_str = Data::OpenSocial::Format::JSON->format($data);
-    note($json_str);
+    note(sprintf('[entry_type %s] %s', $data->entry_type, $json_str));
 
-    is_deeply( scalar $json->from_json($json_str), $src );
+    is_deeply( scalar $json->from_json($json_str), $src->{person} );
 }
 
 {
@@ -71,9 +71,9 @@ our $json = JSON::Any->new;
     isa_ok( $data->group, 'Data::OpenSocial::Group' );
 
     my $json_str = Data::OpenSocial::Format::JSON->format($data);
-    note($json_str);
+    note(sprintf('[entry_type %s] %s', $data->entry_type, $json_str));
 
-    is_deeply( scalar $json->from_json($json_str), $src );
+    is_deeply( scalar $json->from_json($json_str), $src->{group} );
 }
 
 {
@@ -91,9 +91,9 @@ our $json = JSON::Any->new;
     isa_ok( $data->app_data, 'Data::OpenSocial::Appdata' );
 
     my $json_str = Data::OpenSocial::Format::JSON->format($data);
-    note($json_str);
+    note(sprintf('[entry_type %s] %s', $data->entry_type, $json_str));
 
-    is_deeply( scalar $json->from_json($json_str), $src );
+    is_deeply( scalar $json->from_json($json_str), $src->{appData} );
 }
 
 {
@@ -117,9 +117,9 @@ our $json = JSON::Any->new;
     isa_ok( $data->album, 'Data::OpenSocial::Album' );
 
     my $json_str = Data::OpenSocial::Format::JSON->format($data);
-    note($json_str);
+    note(sprintf('[entry_type %s] %s', $data->entry_type, $json_str));
 
-    is_deeply( scalar $json->from_json($json_str), $src );
+    is_deeply( scalar $json->from_json($json_str), $src->{album} );
 }
 
 {
@@ -141,9 +141,9 @@ our $json = JSON::Any->new;
     isa_ok( $data->media_item, 'Data::OpenSocial::MediaItem' );
 
     my $json_str = Data::OpenSocial::Format::JSON->format($data);
-    note($json_str);
+    note(sprintf('[entry_type %s] %s', $data->entry_type, $json_str));
 
-    is_deeply( scalar $json->from_json($json_str), $src );
+    is_deeply( scalar $json->from_json($json_str), $src->{mediaItem} );
 }
 
 done_testing();
