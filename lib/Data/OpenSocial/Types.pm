@@ -449,20 +449,72 @@ sub is_collection_type {
     exists $COLLECTION_TYPES{$type};
 }
 
+sub define_simple_type {
+    my ($class, $type, $enums) = @_;
+
+    return if (find_type_constraint($type));
+    enum $type => @$enums;
+}
+
+sub define_complex_type {
+    my ($class, $type, $attrs) = @_;
+
+    return if (find_type_constraint($type));
+    my $class_name = $attrs->{class_type};
+    return if (find_type_constraint($class_name));
+   
+    class_type $class_name;
+    subtype $type => as $class_name;
+    if ( exists $attrs->{coerce} ) {
+        coerce $type => @{ $attrs->{coerce} };
+    }
+}
+
+sub define_collection_type {
+    my ($class, $type, $attrs) = @_;
+
+    return if (find_type_constraint($type));
+
+    subtype $type => as $attrs->{as};
+    coerce $type  => @{ $attrs->{coerce} };
+}
+
+sub set_simple_type {
+    my ($class, $type, $enums) = @_;
+    $SIMPLE_TYPES{$type} = $enums;
+}
+
+sub set_complex_type {
+    my ($class, $type, $attrs) = @_;
+    $COMPLEX_TYPES{$type} = $attrs;
+}
+
+sub set_collection_type {
+    my ($class, $type, $attrs) = @_;
+    $COLLECTION_TYPES{$type} = $attrs;
+}
+
+sub find_type_constraint {
+    my $type = shift;
+    my $class = any_moose() . '::Util::TypeConstraints';
+    $class->can('find_type_constraint')->($type);
+}
+
 do {
     while ( my ( $type, $enums ) = each %SIMPLE_TYPES ) {
-        enum $type => @$enums;
+        __PACKAGE__->define_simple_type($type, $enums);
     }
 };
 
 do {
     while ( my ( $type, $attrs ) = each %COMPLEX_TYPES ) {
-        my $class_name = $attrs->{class_type};
-        class_type $class_name;
-        subtype $type => as $class_name;
-        if ( exists $attrs->{coerce} ) {
-            coerce $type => @{ $attrs->{coerce} };
-        }
+        __PACKAGE__->define_complex_type($type, $attrs);
+    }
+};
+
+do {
+    while ( my ( $type, $attrs ) = each %COLLECTION_TYPES ) {
+        __PACKAGE__->define_collection_type($type, $attrs);
     }
 };
 
@@ -472,16 +524,11 @@ do {
             DateTime::Format::ISO8601->parse_datetime($_);
         }
     }
-
-    while ( my ( $type, $attrs ) = each %COLLECTION_TYPES ) {
-        subtype $type => as $attrs->{as};
-        coerce $type  => @{ $attrs->{coerce} };
-    }
 };
 
 no Any::Moose;
 
-1;
+__PACKAGE__->meta->make_immutable;
 
 __END__
 
