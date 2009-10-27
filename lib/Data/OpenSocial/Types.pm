@@ -494,11 +494,11 @@ sub set_collection_type {
     $COLLECTION_TYPES{$type} = $attrs;
 }
 
-sub find_type_constraint {
-    my $type = shift;
-    my $class = any_moose() . '::Util::TypeConstraints';
-    $class->can('find_type_constraint')->($type);
-}
+#sub find_type_constraint {
+#    my $type = shift;
+#    my $class = any_moose() . '::Util::TypeConstraints';
+#    $class->can('find_type_constraint')->($type);
+#}
 
 do {
     while ( my ( $type, $enums ) = each %SIMPLE_TYPES ) {
