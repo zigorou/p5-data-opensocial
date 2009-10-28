@@ -1,8 +1,8 @@
 use strict;
 use Test::More;
 
-use Data::OpenSocial::Name;
 use Data::OpenSocial::Person;
+use Data::OpenSocial::Name;
 
 diag('refer to http://www.opensocial.org/Technical-Resources/opensocial-spec-v09/REST-API.html#rfc.section.3.3');
 

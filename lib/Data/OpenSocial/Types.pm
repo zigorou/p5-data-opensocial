@@ -61,11 +61,20 @@ use DateTime::Format::ISO8601;
 use Module::Load;
 use Module::Loaded;
 
-our %PREMITIVE_TYPES = (
-    Str             => 1,
-    Bool            => 1,
-    Int             => 1,
-    'ArrayRef[Str]' => 1,
+our %PRIMITIVE_TYPES = (
+    Str                  => 1,
+    Bool                 => 1,
+    Int                  => 1,
+    'ArrayRef[Str]'      => 1,
+    'OpenSocial.Boolean' => +{
+        type => 'Bool',
+        coerce  => [
+            from 'Object',
+            via {
+                return $_ ? 1 : 0;
+            },
+        ],
+    },
 );
 
 our %IMPORTED_TYPES = ( DateTime => 1, );
@@ -426,7 +435,7 @@ sub create_data {
 
 sub is_primitive_type {
     my ( $class, $type ) = @_;
-    exists $PREMITIVE_TYPES{$type};
+    exists $PRIMITIVE_TYPES{$type};
 }
 
 sub is_imported_type {
@@ -449,6 +458,18 @@ sub is_collection_type {
     exists $COLLECTION_TYPES{$type};
 }
 
+sub define_primitive_type {
+    my ($class, $type, $attrs) = @_;
+
+    return unless (ref $attrs);
+    return if (find_type_constraint($type));
+    
+    subtype $type => as $attrs->{type};
+    if ( exists $attrs->{coerce} ) {
+        coerce $type  => @{ $attrs->{coerce} };
+    }
+}
+
 sub define_simple_type {
     my ($class, $type, $enums) = @_;
 
@@ -461,9 +482,11 @@ sub define_complex_type {
 
     return if (find_type_constraint($type));
     my $class_name = $attrs->{class_type};
-    return if (find_type_constraint($class_name));
-   
-    class_type $class_name;
+
+    unless (any_moose() eq 'Mouse' && find_type_constraint($class_name)) {
+        class_type $class_name;
+    }
+
     subtype $type => as $class_name;
     if ( exists $attrs->{coerce} ) {
         coerce $type => @{ $attrs->{coerce} };
@@ -476,7 +499,34 @@ sub define_collection_type {
     return if (find_type_constraint($type));
 
     subtype $type => as $attrs->{as};
-    coerce $type  => @{ $attrs->{coerce} };
+    if ( exists $attrs->{coerce} ) {
+        coerce $type  => @{ $attrs->{coerce} };
+    }
+}
+
+sub get_primitive_type {
+    my ($class, $type) = @_;
+    $PRIMITIVE_TYPES{$type};
+}
+
+sub get_simple_type {
+    my ($class, $type) = @_;
+    $SIMPLE_TYPES{$type};
+}
+
+sub get_complex_type {
+    my ($class, $type) = @_;
+    $COMPLEX_TYPES{$type};
+}
+
+sub get_collection_type {
+    my ($class, $type) = @_;
+    $COLLECTION_TYPES{$type};
+}
+
+sub set_primitive_type {
+    my ($class, $type, $attrs) = @_;
+    $PRIMITIVE_TYPES{$type} = $attrs;
 }
 
 sub set_simple_type {
@@ -494,11 +544,11 @@ sub set_collection_type {
     $COLLECTION_TYPES{$type} = $attrs;
 }
 
-#sub find_type_constraint {
-#    my $type = shift;
-#    my $class = any_moose() . '::Util::TypeConstraints';
-#    $class->can('find_type_constraint')->($type);
-#}
+do {
+    while ( my ( $type, $attrs ) = each %PRIMITIVE_TYPES ) {
+        __PACKAGE__->define_primitive_type($type, $attrs);
+    }
+};
 
 do {
     while ( my ( $type, $enums ) = each %SIMPLE_TYPES ) {

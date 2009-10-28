@@ -1,6 +1,9 @@
 package Data::OpenSocial::Name;
 
 use Any::Moose;
+use Data::OpenSocial::Types qw(
+  OpenSocial.Name
+);
 
 extends 'Data::OpenSocial::Base';
 

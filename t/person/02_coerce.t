@@ -9,6 +9,7 @@ plan tests => 5 * 2;
 
     use Any::Moose;
     use Data::OpenSocial::Types qw(OpenSocial.Person);
+    use Data::OpenSocial::Person;
 
     has 'data' => (
         is     => 'rw',
