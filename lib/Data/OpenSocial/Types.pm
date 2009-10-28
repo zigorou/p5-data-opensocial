@@ -4,6 +4,8 @@ use Any::Moose;
 use Any::Moose (
     'X::Types' => [
         -declare => [
+            ### primitive
+            'OpenSocial.GUID',
             ### enum
             'OpenSocial.EscapeTypeType',
             'OpenSocial.MediaItemType',
@@ -63,10 +65,7 @@ use Module::Loaded;
 
 our %PRIMITIVE_TYPES = (
     Str                  => 1,
-    Bool                 => 1,
-    Int                  => 1,
-    'ArrayRef[Str]'      => 1,
-    'OpenSocial.Boolean' => +{
+    Bool                 => +{
         type => 'Bool',
         coerce  => [
             from 'Object',
@@ -75,6 +74,8 @@ our %PRIMITIVE_TYPES = (
             },
         ],
     },
+    Int                  => 1,
+    'ArrayRef[Str]'      => 1,
 );
 
 our %IMPORTED_TYPES = ( DateTime => 1, );
@@ -463,8 +464,11 @@ sub define_primitive_type {
 
     return unless (ref $attrs);
     return if (find_type_constraint($type));
+
+    if (exists $attrs->{type}) {
+        subtype $type => as $attrs->{type};
+    }
     
-    subtype $type => as $attrs->{type};
     if ( exists $attrs->{coerce} ) {
         coerce $type  => @{ $attrs->{coerce} };
     }

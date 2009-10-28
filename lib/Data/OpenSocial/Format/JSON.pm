@@ -7,18 +7,22 @@ use Data::Util qw(is_array_ref is_hash_ref);
 use DateTime::Format::ISO8601;
 use Module::Load;
 use Module::Loaded;
+use URI::Template::Restrict;
 
 use Data::OpenSocial::Types;
 
 sub format {
-    my ( $class, $object ) = @_;
+    my ( $class, $object, $opts ) = @_;
 
+    $opts ||= +{};
+    $opts->{guid_ns} ||= 'example.com';
+    
     my $json = JSON::Any->new;
-    return $json->to_json( $class->format_object($object) );
+    return $json->to_json( $class->format_object($object, $opts) );
 }
 
 sub format_object {
-    my ( $class, $object ) = @_;
+    my ( $class, $object, $opts ) = @_;
 
     unless ( defined $object ) {
         return undef;
@@ -38,7 +42,7 @@ sub format_object {
         my $element_name = $object->field_to_element($field);
 
         if ( Data::OpenSocial::Types->is_primitive_type($type) ) {
-            if ( $type eq 'Bool' || $type eq 'OpenSocial.Boolean' ) {
+            if ( $type eq 'Bool' ) {
                 $serialized{$element_name} = ($object->$field) ? JSON::Any->true : JSON::Any->false;
             }
             else {
@@ -184,6 +188,10 @@ sub parse_object {
         my $type =
           $class->_find_attribute_by_name( $class_type, $field )
           ->type_constraint;
+
+        if ($type eq 'Bool') {
+            $data{$field} = $object->{$element} ? 1 : 0;
+        }
 
         if ( is_hash_ref( $data{$field} ) ) {
             if (
