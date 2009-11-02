@@ -128,4 +128,26 @@ diag(
     }
 }
 
+{
+    diag('single entry with abbr format');
+    
+    my %defaults = (
+        pokes => 3, last_poke => '2008-02-13T18:30:02Z',
+    );
+
+    my $appdata_entries = [
+        Data::OpenSocial::AppdataEntry->new( key => 'pokes', value => 3, ),
+        Data::OpenSocial::AppdataEntry->new( key => 'last_poke', value => '2008-02-13T18:30:02Z' ),
+    ];
+
+    {
+        my $data = Data::OpenSocial::Appdata->new;
+        isa_ok( $data, 'Data::OpenSocial::Appdata' );
+
+        $data->entry($appdata_entries);
+        is_deeply( $data->entry, $appdata_entries, 'get/set accessor test' );
+    }
+}
+
+
 done_testing;

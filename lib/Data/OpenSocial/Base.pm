@@ -46,6 +46,7 @@ around 'BUILDARGS' => sub {
     for my $key (keys %$args) {
         next if ($key eq 'query_fields');
         my $field = $class->element_to_field_map->{$key} || $key;
+        next unless ($class->can($field));
         $args->{query_fields}{$field} = 1;
         unless (defined $args->{$key}) {
             delete $args->{$key};

@@ -45,6 +45,9 @@ sub format_object {
             if ( $type eq 'Bool' ) {
                 $serialized{$element_name} = ($object->$field) ? JSON::Any->true : JSON::Any->false;
             }
+            elsif ( $type eq 'Int' ) {
+                $serialized{$element_name} = int($object->$field);
+            }
             else {
                 $serialized{$element_name} = $object->$field;
             }
@@ -141,7 +144,7 @@ sub parse_object {
         && !exists $object->{entry} )
     {
         $object->{entry} = [];
-        for ( keys %$object ) {
+        for ( grep { $_ ne 'entry' } keys %$object ) {
             push(
                 @{ $object->{entry} },
                 +{ key => $_, value => $object->{$_} }
